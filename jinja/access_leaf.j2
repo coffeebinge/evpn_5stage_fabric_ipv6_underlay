@@ -2,10 +2,64 @@
 system {
     host-name {{ USERINPUT['hostname'] }};
     auto-snapshot;
-    domain-name {{ GLOBAL['domain'] }};
     time-zone {{ GLOBAL['timezone'] }};
     root-authentication {
         encrypted-password "{{ CREDS['root'] }}";
+    }
+    commit {
+        synchronize;
+        no-delta-synchronize;
+    }
+    login {
+        message "{{ GLOBAL['loginmsg'] }}";
+        retry-options {
+            tries-before-disconnect 3;
+            backoff-threshold 1;
+            backoff-factor 6;
+            minimum-time 30;
+        }
+        class SUPER-USER-REMOTE {
+            idle-timeout 10;
+            permissions all;
+        }
+        user remote {
+            full-name Radius-Null-User;
+            uid 9999;
+            class SUPER-USER-REMOTE;
+        }
+{% for USER in CREDS['users'] %}
+        user {{ USER['name'] }} {
+            uid {{ USER['uid'] }};
+            class {{ USER['class'] }};
+            authentication {
+{% for AUTH in USER['auth'] %}
+                {{ AUTH['authtype'] }} "{{ AUTH['authvalue'] }}";
+{% endfor %}
+            }
+        }
+{% endfor %}
+    }
+    services {
+        ssh {
+            root-login deny;
+            protocol-version v2;
+        }
+        netconf {
+            ssh;
+            rfc-compliant;
+            yang-compliant;
+        }
+    }
+    internet-options {
+        tcp-drop-synfin-set;
+    }
+    authentication-order password;
+    ports {
+        console log-out-on-disconnect;
+        auxiliary {
+            disable;
+            insecure;
+        }
     }
     name-server {
 {% for d in GLOBAL['dns']%}

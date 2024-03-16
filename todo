@@ -1,0 +1,4 @@
+create git ignore, exclude creds file
+
+rename testing version of credentials.yml and rename to CREDENTIALS-EXAMPLE once we are done here
+
