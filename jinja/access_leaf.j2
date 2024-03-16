@@ -1,1 +1,15 @@
 {# this is for an ERB leaf, covering ex4400 and qfx5120 to start #}
+system {
+    host-name {{ USERINPUT['hostname'] }};
+    auto-snapshot;
+    domain-name {{ GLOBAL['domain'] }};
+    time-zone {{ GLOBAL['timezone'] }};
+    root-authentication {
+        encrypted-password "{{ CREDS['root'] }}";
+    }
+    name-server {
+{% for d in GLOBAL['dns']%}
+        {{ d }};
+{% endfor %}
+    }
+}

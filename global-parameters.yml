@@ -1,0 +1,8 @@
+---
+## global config parameters - definitions for all devices in the fabric
+domain: test.lab
+timezone: UTC
+dns:
+  - x.x.x.x
+  - y.y.y.y
+
