@@ -5,3 +5,18 @@ hostname: pod1-leaf1
 
 ## add chassis device count for AE
 ae-count: 48
+
+uplinks:
+- int: et-0/0/53
+  description: "spine1 et-0/0/0"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 172.21.0.5, bitmask: 31, addr-v6: 2001:db8:21::5, v6-bitmask: 127, vrf: False}
+- int: et-0/0/54
+  description: "spine2 et-0/0/0"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 172.21.0.7, bitmask: 31, addr-v6: 2001:db8:21::7, v6-bitmask: 127, vrf: False}
+

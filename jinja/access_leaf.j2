@@ -105,3 +105,31 @@ chassis {
         }
     }
 }
+
+interfaces {
+{% for INTS in USERINPUT['uplinks'] %}
+    {{ INTS['int'] }} {
+        description "{{ INTS['description'] }}";
+{% if INTS['vlan-tagging'] == True %}
+        vlan-tagging;
+{% endif %}
+        mtu {{ INTS['mtu'] }};
+{% for UNITS in INTS['unit'] %}
+        unit {{ UNITS['id'] }} {
+{% if INTS['vlan-tagging'] == True %}
+            vlan-id {{ UNITS['vlan-id'] }};
+{% endif %}
+            family inet {
+                address {{ UNITS['addr-v4'] }}/{{ UNITS['bitmask'] }};
+            }
+{% if not UNITS['addr-v6'] == False %}
+            family inet6 {
+                address {{ UNITS['addr-v6'] }}/{{ UNITS['v6-bitmask'] }};
+            }
+{% endif %}
+        }
+{% endfor %}
+    }
+{% endfor %}
+}
+
