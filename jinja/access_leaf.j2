@@ -107,7 +107,7 @@ chassis {
 }
 
 interfaces {
-{% for INTS in USERINPUT['uplinks'] %}
+{% for INTS in USERINPUT['uplinks'] %} {# begin uplinks #}
     {{ INTS['int'] }} {
         description "{{ INTS['description'] }}";
 {% if INTS['vlan-tagging'] == True %}
@@ -130,6 +130,48 @@ interfaces {
         }
 {% endfor %}
     }
-{% endfor %}
+{% endfor %} {# end uplinks #}
+    vme {
+        unit 0 {
+            family inet {
+                address {{ USERINPUT['mgmt-addr'] }}/{{ USERINPUT['bitmask'] }};
+            }
+        }
+    }
+    irb {
+        {# gratuitous-arp-reply;   ### is this needed? #}
+{% if USERINPUT['datavlans'] is defined %}
+{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}
+        unit {{ IRB['id'] }} {
+            description "{{ IRB['description'] }}";
+            family inet {
+                address {{ IRB['ip-prefix'] }}.{{ IRB['irb-hostbit'] }}/{{ IRB['bitmask'] }};
+            }
+{% if not IRB['ip6-prefix'] == False %}
+            family inet6 {
+                address {{ IRB['ip6-prefix'] }}{{ IRB['irb-hostbit'] }}/{{ IRB['ip6-bitmask'] }};
+                address {{ IRB['ip6-ll'] }}{{ IRB['irb-hostbit'] }}/64;
+            }
+{% endif %}
+            mac {{ IRB['any-mac'] }};
+        }
+{% endif %}{% endfor %}{% endif %}
+{%if GLOBAL['datavlans'] is defined %}
+{% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3-enabled'] == True %}
+        unit {{ IRB['id'] }} {
+            description "{{ IRB['description'] }}";
+            family inet {
+                address {{ IRB['ip-prefix'] }}.{{ IRB['irb-hostbit'] }}/{{ IRB['bitmask'] }};
+            }
+{% if not IRB['ip6-prefix'] == False %}
+            family inet6 {
+                address {{ IRB['ip6-prefix'] }}{{ IRB['irb-hostbit'] }}/{{ IRB['ip6-bitmask'] }};
+                address {{ IRB['ip6-ll'] }}{{ IRB['irb-hostbit'] }}/64;
+            }
+{% endif %}
+            mac {{ IRB['any-mac'] }};
+        }
+    }
+{% endif %}{% endfor %}{% endif %}
 }
 
