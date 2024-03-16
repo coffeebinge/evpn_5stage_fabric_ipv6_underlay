@@ -15,3 +15,13 @@ syslog:
 loginmsg: \n\n\n\t       * * *  W A R N I N G  * * *\n\tProperty of the XYZ\n\nIf you are not authorized to access this system, disconnect now.\nUsers of this system have no expectation of privacy. By continuing,\nyou consent to your keystrokes and data content being monitored.\n\n
 
 
+##############################################
+## ssh section
+## root login, allow or deny
+## nc represents netconf
+
+root-login: deny 
+ssh-connection-limit: 5
+ssh-rate-limit: 5
+nc-connection-limit: 10
+nc-rate-limit: 60

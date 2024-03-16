@@ -41,13 +41,18 @@ system {
     }
     services {
         ssh {
-            root-login deny;
+            root-login {{ GLOBAL['root-login'] }};
             protocol-version v2;
+            connection-limit {{ GLOBAL['ssh-connection-limit'] }};
+            rate-limit {{ GLOBAL['ssh-rate-limit'] }};
         }
         netconf {
-            ssh;
+            ssh {
+                connection-limit {{ GLOBAL['nc-connection-limit'] }};
+                rate-limit {{ GLOBAL['nc-rate-limit'] }};
             rfc-compliant;
             yang-compliant;
+            }
         }
     }
     internet-options {
