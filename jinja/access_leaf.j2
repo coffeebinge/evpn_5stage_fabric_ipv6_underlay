@@ -66,9 +66,35 @@ system {
             insecure;
         }
     }
+    syslog {
+        user * {
+            any emergency;
+        }
+{% for syslog in GLOBAL['syslog']%}
+        host {{ syslog }} {
+            any notice;
+            authorization any;
+            firewall any;
+            interactive-commands any;
+            structured-data;
+        }
+{% endfor %}
+        file messages {
+            any any;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
     name-server {
 {% for d in GLOBAL['dns']%}
         {{ d }};
+{% endfor %}
+    }
+    ntp {
+{% for NTP in GLOBAL['ntp'] %}
+        server {{ NTP }};
 {% endfor %}
     }
 }
