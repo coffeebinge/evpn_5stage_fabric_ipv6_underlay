@@ -98,3 +98,10 @@ system {
 {% endfor %}
     }
 }
+chassis {
+    aggregated-devices {
+        ethernet {
+            device-count {{ USERINPUT['ae-count'] }};
+        }
+    }
+}

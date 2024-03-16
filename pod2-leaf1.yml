@@ -1,2 +1,7 @@
 ---
 hostname: pod2-leaf1
+
+
+
+## add chassis device count for AE
+ae-count: 48
