@@ -45,6 +45,9 @@ IPv6-RA: True
 IPv4-lo0-filter: True
 IPv6-lo0-filter: False
 
+# if you want to enable the GBP Profile, set to True
+gbp-enabled: True
+
 ###############################################################################################
 ## BGP section  (find bgp neighbors definitions for underlay/overlay in each device yaml file)
 ## note: connect-retry-interval is for all bgp groups, you can override manually per neighbor if you wish.

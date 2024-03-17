@@ -104,12 +104,16 @@ chassis {
             device-count {{ USERINPUT['ae-count'] }};
         }
     }
+{% if GLOBAL['gbp-enabled'] %}
+    forwarding-options {
+        vxlan-gbp-profile;
+    }
+{% endif %}
 }
-
 interfaces {
-{% for INTS in USERINPUT['uplinks'] %} {# begin uplinks #}
+{% for INTS in USERINPUT['uplinks'] %}{# begin uplinks #}
     {{ INTS['int'] }} {
-        description "{{ INTS['description'] }}";
+        description "EVPN_UPLINK: {{ INTS['description'] }}";
 {% if INTS['vlan-tagging'] == True %}
         vlan-tagging;
 {% endif %}
