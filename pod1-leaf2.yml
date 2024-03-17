@@ -9,6 +9,10 @@ defgw: 10.x.x.x
 ## add chassis device count for AE
 ae-count: 48
 
+loopbacks:
+  - {id: 0, addr-v4: 10.44.255.2, addr-v6: 2001:db8:44:255::2, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
+  - {id: 1, addr-v4: 10.44.254.2, addr-v6: 2001:db8:44:254::2, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: campus}
+
 uplinks:
 - int: et-0/0/53
   description: "spine1 et-0/0/0"

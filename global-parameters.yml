@@ -29,6 +29,22 @@ ssh-rate-limit: 5
 nc-connection-limit: 10
 nc-rate-limit: 60
 
+staticroutes:
+  - 0.0.0.0/0
+
+
+###########################################################################
+## Vlans section
+## "ip-prefix" for v4 needs to have first three octets defined. Do not place a period at the end
+## "ip6-prefix" specify the entire prefix ex: "2001:db8:44:200::" including ending double colon, surround by quotes
+## "vrf" needs to be defined for any vlan that has a subnet active (aka l3-enabled)
+## If you are enabling routing for a vlan, but do not want IPv6, just leave the v6 keys set to False
+## "irb-hostbit" is used for defining the IRB host bit, same used for v4/v6.
+## "any-mac" is the mac for the IRB anycast gateway. 
+## "ip6-ll" is the link-local address for the IRB interface.
+## Example:
+##  - {id: 1001, l3-enabled: True, vrf: campus, any-mac: "00:00:10:01:00:01", ip-prefix: 10.1.0, bitmask: 16, v6-mac: "00:06:10:01:00:01", ip6-prefix: "2001:db8:a1:0::", ip6-bitmask: 64, ip6-ll: "fe80::10:01:00:01", irb-virt: 1, description: campus}
+##
 
 datavlans:
   - {id: 200, vni: 100200, l3-enabled: False, vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: IOT_NETWORK}

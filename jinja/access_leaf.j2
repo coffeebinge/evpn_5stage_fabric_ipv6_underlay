@@ -173,5 +173,54 @@ interfaces {
         }
     }
 {% endif %}{% endfor %}{% endif %}
+    lo0 {
+{% for LOOP in USERINPUT['loopbacks'] %}
+        unit {{ LOOP['id'] }} {
+            family inet {
+{% if not LOOP['filter-v4'] == False and not GLOBAL['IPv4-lo0-filter'] == False %}
+                filter {
+                    input {{ LOOP['filter-v4'] }};
+                }
+{% endif %}
+                address {{ LOOP['addr-v4'] }}/32;
+            }
+{% if not LOOP['addr-v6'] == False %}
+            family inet6 {
+{% if not LOOP['filter-v6'] == False and not GLOBAL['IPv6-lo0-filter'] == False %}
+                filter {
+                    input {{ LOOP['filter-v6'] }};
+                }
+{% endif %}
+                address {{ LOOP['addr-v6'] }}/128;
+            }
+{% endif %}
+        }
+{% endfor %}
+    }
 }
 
+{#  ADD SNMPv3 SECTION HERE #}
+
+forwarding-options {
+    storm-control-profiles default {
+        all;
+    }
+    evpn-vxlan {
+        shared-tunnels;  {# is this needed #}
+    }
+    vxlan-routing {
+        overlay-ecmp;  {# is this needed #}
+    }
+}
+routing-options {
+    static {
+{% for SR in GLOBAL['staticroutes'] %}
+        route {{ SR }} next-hop {{ USERINPUT['defgw'] }};
+{% endfor %}
+    }
+    router-id{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %};
+    forwarding-table {
+        export PFE-LB;
+        ecmp-fast-reroute;
+    }
+}
