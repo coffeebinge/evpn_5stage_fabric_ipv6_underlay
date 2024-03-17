@@ -2,8 +2,8 @@
 ## global config parameters - definitions for all devices in the fabric
 timezone: UTC
 dns:
-  - x.x.x.x
-  - y.y.y.y
+  - 8.8.8.8
+  - 8.8.4.4
 
 radius:
   - 1.2.3.4

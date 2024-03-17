@@ -50,9 +50,9 @@ system {
             ssh {
                 connection-limit {{ GLOBAL['nc-connection-limit'] }};
                 rate-limit {{ GLOBAL['nc-rate-limit'] }};
+            }
             rfc-compliant;
             yang-compliant;
-            }
         }
     }
     internet-options {
@@ -198,18 +198,17 @@ interfaces {
 {% endfor %}
     }
 }
-
 {#  ADD SNMPv3 SECTION HERE #}
-
+{# is forwarding-options vxlan shared tunnels needed, overlay-ecmp? #}
 forwarding-options {
     storm-control-profiles default {
         all;
     }
     evpn-vxlan {
-        shared-tunnels;  {# is this needed #}
+        shared-tunnels;
     }
     vxlan-routing {
-        overlay-ecmp;  {# is this needed #}
+        overlay-ecmp;
     }
 }
 routing-options {
@@ -240,7 +239,6 @@ protocols {
         interface all {
             version 2;
         }
-    }
     }
 {% if GLOBAL['IPv6-RA'] == True %}{# need to configure RA guard #}
     router-advertisement {

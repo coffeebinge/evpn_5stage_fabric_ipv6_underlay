@@ -62,7 +62,7 @@ core2
 
 
 ASN
-Underlay RT ASN ref: 65000
+Overlay RT ASN ref: 65000
 
 pod1-leaf1    65001
 pod1-leaf2    65002
