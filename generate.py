@@ -23,13 +23,13 @@ leaf_t = jenv.get_template("access_leaf.j2")
 ## fyi: github copilot is amazing! It took the above 4 comments and ran with it... 
 ## I barely had to type more than a few letters
 
-with open('leaf.list') as leafinv:
+with open('./devices/leaf.list') as leafinv:
     leaves = leafinv.readlines()
-#with open('spine.list') as spineinv:
+#with open('./devices/spine.list') as spineinv:
 #    spines = spineinv.readlines()
-#with open('core.list') as coreinv:
+#with open('./devices/core.list') as coreinv:
 #    cores = coreinv.readlines()
-#with open('border.list') as borderinv:
+#with open('./devices/border.list') as borderinv:
 #    borders = borderinv.readlines()
 
 with open('global-parameters.yml') as global_yml:
@@ -39,7 +39,7 @@ with open('credentials.yml') as cred_yml:
 
 for leaf in leaves:
     leaf = leaf.replace('\n', '')
-    with open(leaf+'.yml') as leaf_yml:
+    with open('./devices/' + leaf + '.yml') as leaf_yml:
         leaf_vars = yaml.safe_load(leaf_yml)
         f = open('configs/'+leaf+'.conf', 'w')
         print(leaf_t.render(GLOBAL=global_vars, CREDS=cred_vars, USERINPUT=leaf_vars), file=f)

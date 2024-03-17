@@ -1,4 +1,5 @@
 {# this is for an ERB leaf, covering ex4400 and qfx5120 to start #}
+{# template for ipv6 evpn underlay, starting lab build #}
 system {
     host-name {{ USERINPUT['hostname'] }};
     auto-snapshot;
@@ -135,6 +136,7 @@ interfaces {
 {% endfor %}
     }
 {% endfor %} {# end uplinks #}
+{# need to add regular interface config here #}
     vme {
         unit 0 {
             family inet {
@@ -143,7 +145,7 @@ interfaces {
         }
     }
     irb {
-        {# gratuitous-arp-reply;   ### is this needed? #}
+{# gratuitous-arp-reply;   ### is this needed? #}
 {% if USERINPUT['datavlans'] is defined %}
 {% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}
         unit {{ IRB['id'] }} {
@@ -202,7 +204,7 @@ interfaces {
 {% endfor %}
     }
 }
-{#  ADD SNMPv3 SECTION HERE #}
+{#  NEED TO ADD SNMPv3 SECTION HERE #}
 {# is forwarding-options vxlan shared tunnels needed, overlay-ecmp? #}
 forwarding-options {
     storm-control-profiles default {
@@ -233,7 +235,6 @@ routing-options {
         }
     }
 }
-
 protocols {
     igmp {
         interface all {
@@ -351,3 +352,4 @@ policy-options {
     }
 }
 
+{# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
