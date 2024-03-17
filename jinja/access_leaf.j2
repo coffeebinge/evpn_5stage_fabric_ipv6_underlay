@@ -258,7 +258,18 @@ protocols {
     lldp-med {
         interface all;
     }
-
+    bgp {
+        group EBGP-UNDERLAY {
+            type external;
+            connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
+            mtu-discovery;
+            log-updown;
+            family inet6 {
+                unicast;
+            }
+            authentication-key "{{ CREDS['bgpkey'] }}"
+            export UNDERLAY-BGP-OUT;
+            local-as {{ USERINPUT['underlay-as'] }};
 }
 
 
@@ -269,6 +280,16 @@ policy-options {
     policy-statement PFE-LB {
         then {
             load-balance per-packet;
+        }
+    }
+    policy-statement UNDERLAY-BGP-OUT {
+        term ADVERTISE {
+            from {
+                protocol direct;
+                route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}/32 exact;
+                route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %}/128 exact;
+            }
+            then accept;
         }
     }
 }
