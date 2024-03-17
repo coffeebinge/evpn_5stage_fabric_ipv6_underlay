@@ -1,0 +1,78 @@
+loopbacks - underlay  2001:db8:255::/64
+pod1-leaf1    2001:db8:255::1/128
+pod1-leaf2    2001:db8:255::2/128
+pod2-leaf1    2001:db8:255::3/128
+pod2-leaf2    2001:db8:255::4/128
+pod1-spine1   2001:db8:255::5/128
+pod1-spine2   2001:db8:255::6/128
+pod2-spine1   2001:db8:255::7/128
+pod2-spine2   2001:db8:255::8/128
+core1         2001:db8:255::9/128
+core2         2001:db8:255::10/128
+border1       2001:db8:255::11/128
+border2       2001:db8:255::12/128
+
+loopbacks - l3vrf  2001:db8:254::/64
+pod1-leaf1    2001:db8:254::1/128
+pod1-leaf2    2001:db8:254::2/128
+pod2-leaf1    2001:db8:254::3/128
+pod2-leaf2    2001:db8:254::4/128
+pod1-spine1   2001:db8:254::5/128
+pod1-spine2   2001:db8:254::6/128
+pod2-spine1   2001:db8:254::7/128
+pod2-spine2   2001:db8:254::8/128
+core1         2001:db8:254::9/128
+core2         2001:db8:254::10/128
+border1       2001:db8:254::11/128
+border2       2001:db8:254::12/128
+
+p2p  2001:db8:250::/64 (lower address on starting device - pod1-leaf1 :0, pod1-spine1 :1)
+pod1-leaf1
+ to pod1-spine1  2001:db8:250::0/127
+ to pod1-spine2  2001:db8:250::2/127
+pod1-leaf2
+ to pod1-spine1  2001:db8:250::4/127
+ to pod1-spine2  2001:db8:250::6/127
+pod2-leaf1
+ to pod2-spine1  2001:db8:250::8/127
+ to pod2-spine2  2001:db8:250::10/127
+pod2-leaf2
+ to pod2-spine1  2001:db8:250::12/127
+ to pod2-spine2  2001:db8:250::14/127
+
+pod1-spine1
+ to core1    2001:db8:250::16/127
+ to core2    2001:db8:250::18/127
+pod1-spine2
+ to core1    2001:db8:250::20/127
+ to core2    2001:db8:250::22/127
+pod2-spine1
+ to core1    2001:db8:250::24/127
+ to core2    2001:db8:250::26/127
+pod2-spine2
+ to core1    2001:db8:250::28/127
+ to core2    2001:db8:250::30/127
+
+core1
+ to border1    2001:db8:250::32/127
+ to border2    2001:db8:250::34/127
+core2
+ to border1    2001:db8:250::36/127
+ to border2    2001:db8:250::38/127
+
+
+ASN
+Underlay RT ASN ref: 65000
+
+pod1-leaf1    65001
+pod1-leaf2    65002
+pod2-leaf1    65003
+pod2-leaf2    65004
+pod1-spine1   65005
+pod1-spine2   65006
+pod2-spine1   65007
+pod2-spine2   65008
+core1         65009
+core2         65010
+border1       65011
+border2       65012
