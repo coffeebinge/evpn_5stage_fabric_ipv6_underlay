@@ -230,8 +230,17 @@ routing-options {
     }
 }
 
-{# should I add igmp int all #}
 protocols {
+    igmp {
+        interface all {
+            version 3;
+        }
+    mld {
+        interface all {
+            version 2;
+        }
+    }
+    }
 {% if GLOBAL['IPv6-RA'] == True %}{# need to configure RA guard #}
     router-advertisement {
 {% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}{% if not IRB['ip6-prefix'] == False %}
