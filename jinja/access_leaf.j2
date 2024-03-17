@@ -350,6 +350,12 @@ policy-options {
             then accept;
         }
     }
+    policy-statement EXPORT-T5 {
+        term direct {
+            from protocol direct;
+            then accept;
+        }
+    }
 }
 
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
