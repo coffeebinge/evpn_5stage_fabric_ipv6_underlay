@@ -18,8 +18,8 @@ loopbacks:
 local-as: 65102
 
 bgp-neigh:
-  - {group: "IBGP-SPINES", ebgp-ip: 172.21.0.4, peer-as: 65011, ibgp-ip: 10.21.250.1, bfd-int: 350, bfd-mult: 3, desc: ji-jp-171-b-fs-campus}
-  - {group: "IBGP-SPINES", ebgp-ip: 172.21.0.32, peer-as: 65012, ibgp-ip: 10.21.250.2, bfd-int: 350, bfd-mult: 3, desc: ji-jp-230-3-fs-campus}
+  - {group: "IBGP-SPINES", ubgp-ip: 172.21.0.4,  obgp-ip: 10.21.250.1, peer-as: 65011, bfd-int: 1000, bfd-mult: 3, desc: spine1}
+  - {group: "IBGP-SPINES", ubgp-ip: 172.21.0.32, obgp-ip: 10.21.250.2, peer-as: 65012, bfd-int: 1000, bfd-mult: 3, desc: spine2}
 
 
 uplinks:
