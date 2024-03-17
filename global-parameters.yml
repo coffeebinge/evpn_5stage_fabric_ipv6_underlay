@@ -45,6 +45,12 @@ IPv6-RA: True
 IPv4-lo0-filter: True
 IPv6-lo0-filter: False
 
+###############################################################################################
+## BGP section  (find bgp neighbors definitions for underlay/overlay in each device yaml file)
+## note: connect-retry-interval is for all bgp groups, you can override manually per neighbor if you wish.
+overlay-rt: 65000
+connect-retry-interval: 2
+
 ###########################################################################
 ## Vlans section
 ## "ip-prefix" for v4 needs to have first three octets defined. Do not place a period at the end
