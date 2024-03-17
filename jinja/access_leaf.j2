@@ -269,7 +269,21 @@ protocols {
             }
             authentication-key "{{ CREDS['bgpkey'] }}"
             export UNDERLAY-BGP-OUT;
-            local-as {{ USERINPUT['underlay-as'] }};
+            local-as {{ USERINPUT['local-as'] }};
+            multipath {
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+            }
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['ebgp-ip'] == False %}
+            neighbor {{ NEIG['ebgp-ip'] }} {
+                description {{ NEIG['desc'] }};
+                peer-as {{ NEIG['peer-as'] }};
+            }
+{% endif %}{% endfor %}
+        }           
 }
 
 

@@ -15,7 +15,7 @@ loopbacks:
 
 ##################################################
 ## Underlay BGP section
-underlay-as: 65102
+local-as: 65102
 
 bgp-neigh:
   - {group: "IBGP-SPINES", ebgp-ip: 172.21.0.4, peer-as: 65011, ibgp-ip: 10.21.250.1, bfd-int: 350, bfd-mult: 3, desc: ji-jp-171-b-fs-campus}
