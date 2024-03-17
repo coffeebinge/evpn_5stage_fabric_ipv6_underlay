@@ -222,5 +222,44 @@ routing-options {
     forwarding-table {
         export PFE-LB;
         ecmp-fast-reroute;
+        chained-composite-next-hop {
+            ingress {
+                evpn;
+            }
+        }
     }
 }
+
+{# should I add igmp int all #}
+protocols {
+{% if GLOBAL['IPv6-RA'] == True %}
+    router-advertisement {
+{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}{% if not IRB['ip6-prefix'] == False %}
+        interface irb.{{ IRB['id'] }} {
+            prefix {{ IRB['ip6-prefix'] }}/{{ IRB['ip6-bitmask'] }};
+        }
+{% endif %}{% endif %}{% endfor %}
+    }
+    lldp {
+        port-id-subtype interface-name;
+        neighbour-port-info-display port-id;
+        interface all;
+    }
+    lldp-med {
+        interface all;
+    }
+
+}
+
+
+
+
+
+policy-options {
+    policy-statement PFE-LB {
+        then {
+            load-balance per-packet;
+        }
+    }
+}
+
