@@ -32,6 +32,18 @@ nc-rate-limit: 60
 staticroutes:
   - 0.0.0.0/0
 
+########################################################################
+## Enable Features
+
+## If you plan on using IPv6 router advertisement, set to True
+IPv6-RA: True
+
+## The options below allow you to fully remove the firewall filters from the rendered config and negate the filter
+## applied to the lo0 interface. If this is set to True, the firewall config will render. You'll also need to specify
+## which filter (default is SERVICE-IN and SERVICE-IN-V6) under the loopback interface.
+## Option is listed here for labs, normally we leave this True in Production, and for realistic lab/unit tests.
+IPv4-lo0-filter: True
+IPv6-lo0-filter: False
 
 ###########################################################################
 ## Vlans section

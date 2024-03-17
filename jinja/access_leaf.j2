@@ -232,7 +232,7 @@ routing-options {
 
 {# should I add igmp int all #}
 protocols {
-{% if GLOBAL['IPv6-RA'] == True %}
+{% if GLOBAL['IPv6-RA'] == True %}{# need to configure RA guard #}
     router-advertisement {
 {% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}{% if not IRB['ip6-prefix'] == False %}
         interface irb.{{ IRB['id'] }} {
@@ -240,6 +240,7 @@ protocols {
         }
 {% endif %}{% endif %}{% endfor %}
     }
+{% endif %}
     lldp {
         port-id-subtype interface-name;
         neighbour-port-info-display port-id;
