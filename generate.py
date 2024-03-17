@@ -39,7 +39,7 @@ with open('credentials.yml') as cred_yml:
 
 for leaf in leaves:
     leaf = leaf.replace('\n', '')
-    with open('./devices/' + leaf + '.yml') as leaf_yml:
+    with open('./devices/'+leaf+'.yml') as leaf_yml:
         leaf_vars = yaml.safe_load(leaf_yml)
         f = open('configs/'+leaf+'.conf', 'w')
         print(leaf_t.render(GLOBAL=global_vars, CREDS=cred_vars, USERINPUT=leaf_vars), file=f)
