@@ -25,6 +25,9 @@ policy-prefix-list:
   snmp-servers:
     - 10.44.1.100/32
 
+snmp:
+  noc-targets:
+    - {name: SNMP_SERVER, addr: 7.7.7.7}
 
 ##############################################
 ## ssh section

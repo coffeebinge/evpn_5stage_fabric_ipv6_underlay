@@ -282,6 +282,7 @@ interfaces {
     }
 }
 {#  NEED TO ADD SNMPv3 SECTION HERE #}
+{%- include 'inc_snmp.j2' +%}
 {# is forwarding-options vxlan shared tunnels needed, overlay-ecmp? #}
 forwarding-options {
     storm-control-profiles default {

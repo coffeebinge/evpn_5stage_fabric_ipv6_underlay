@@ -1,0 +1,58 @@
+snmp {
+    name v3_profile;
+    location LOCATION_SITE_NAME_EXAMPLE;
+    v3 {
+        usm {
+            local-engine {
+                user snmptestuser {
+                    authentication-sha {
+                        authentication-password "{{ CREDS['snmpv3']['pass'] }}";
+                    }                   
+                    privacy-aes128 {
+                        privacy-password "{{ CREDS['snmpv3']['priv_pass'] }}";
+                    }
+                }
+            }
+        }
+        vacm {
+            security-to-group {
+                security-model usm {
+                    security-name {{ CREDS['snmpv3']['user'] }} {
+                        group SNMPGROUPNAME;
+                    }
+                }
+            }
+            access {
+                group SNMPGROUPNAME {
+                    default-context-prefix {
+                        security-model usm {
+                            security-level privacy {
+                                read-view ALL;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+{% for TARGET in GLOBAL['snmp']['noc-targets'] %}
+        target-address {{ TARGET['name'] }} {
+            address {{ TARGET['addr'] }};
+            target-parameters TARGET-PARAMS;
+        }
+{% endfor %}
+        target-parameters TARGET-PARAMS {
+            parameters {
+                message-processing-model v3;
+                security-model usm;
+                security-level privacy;
+                security-name {{ CREDS['snmpv3']['user'] }};
+            }
+        }
+    }
+    view ALL {
+        oid .1 include;
+    }
+    trap-options {
+        source-address {{ USERINPUT['mgmt-addr'] }};
+    }
+}
