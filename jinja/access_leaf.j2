@@ -24,7 +24,7 @@ system {
             permissions all;
         }
         user remote {
-            full-name Radius-Null-User;
+            full-name AAA-Null-User;
             uid 9999;
             class SUPER-USER-REMOTE;
         }
@@ -137,7 +137,63 @@ interfaces {
     }
 {% endfor %} {# end uplinks #}
 {# need to add regular interface config here #}
+{% if USERINPUT['local-ints'] is defined %}
+{% for INTS in USERINPUT['local-ints'] %}
+    {{ INTS['int'] }} {
+        description "{{ INTS['desc'] }}";
+{% if INTS['mtu'] %}
+        mtu {{ INTS['mtu'] }};
+{% endif %}
+        unit 0 {
+            family ethernet-switching {
+                interface-mode {{ INTS['int-mode'] }};
+                vlan {
+                    members {{ INTS['vlanlist'] }};
+                }
+            }
+        }
+    }
+{% endfor %}{% endif %}
 {# need to add ae member and ae logical ints here #}
+{% if USERINPUT['ae-members'] is defined %}
+{% for INTS in USERINPUT['ae-members'] %}
+    {{ INTS['int'] }} {
+        description "{{ INTS['desc'] }}";
+        ether-options {
+            802.3ad ae{{ INTS['ae-id'] }};
+        }
+    }
+{% endfor %}
+{% endif %}
+{% if USERINPUT['ae-ints'] is defined %}
+{% for INTS in USERINPUT['ae-ints'] %}
+    ae{{ INTS['int'] }} {
+        description "{{ INTS['desc'] }}";
+{% if INTS['mtu'] %}
+        mtu {{ INTS['mtu'] }};
+{% endif %}{% if INTS['esi'] %}
+        esi {
+            00:{{ '%02x' | format(USERINPUT['leaf-pair']) }}:{{ '%02x' | format(INTS['int']) }}:00:00:00:00:00:00:00;
+            all-active;
+        }
+{% endif %}
+        aggregated-ether-options {
+            lacp {
+                active;
+                system-id 00:00:5e:e4:31:57;
+            }
+        }
+        unit 0 {
+            family ethernet-switching {
+                interface-mode {{ INTS['int-mode'] }};
+                vlan {
+                    members {{ INTS['vlanlist'] }};
+                }
+            }
+        }
+    }
+{% endfor %}{% endif %}
+{# need to add storm-control to interfaces #}
     vme {
         unit 0 {
             family inet {
@@ -241,6 +297,7 @@ protocols {
         interface all {
             version 3;
         }
+    }
     mld {
         interface all {
             version 2;

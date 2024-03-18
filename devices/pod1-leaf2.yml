@@ -10,7 +10,7 @@ defgw: 10.192.16.1
 ae-count: 48
 ## evpn info
 pod: 1
-leaf_pair: 1
+leaf-pair: 1   ## please use decimal values 1-255
 
 
 loopbacks:
@@ -46,8 +46,12 @@ local-ints:
   - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101, VLAN201 ]"}
 
 ae-members:
+  - {int: "mge-0/0/2", ae-id: 2, desc: "ae2 test local AE"}
+  - {int: "mge-0/0/3", ae-id: 33, desc: "ae3 test with ESI"}
 
 ae-ints:
+  - {int: 2, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN201 ]"}
+  - {int: 33, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: True, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101, VLAN201 ]"}
 
 
 ## locally significant vlans
