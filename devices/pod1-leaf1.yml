@@ -8,6 +8,10 @@ defgw: 10.192.16.1
 
 ## add chassis device count for AE
 ae-count: 48
+## evpn info
+pod: 1
+leaf_pair: 1
+
 
 loopbacks:
   - {id: 0, addr-v4: 10.44.255.1, addr-v6: 2001:db8:255::1, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
