@@ -58,7 +58,7 @@ connect-retry-interval: 2
 ## Vlans section
 ## "ip-prefix" for v4 needs to have first three octets defined. Do not place a period at the end
 ## "ip6-prefix" specify the entire prefix ex: "2001:db8:44:200::" including ending double colon, surround by quotes
-## "vrf" needs to be defined for any vlan that has a subnet active (aka l3-enabled)
+## "l3vrf" needs to be defined for any vlan that has a subnet active (aka l3-enabled)
 ## If you are enabling routing for a vlan, but do not want IPv6, just leave the v6 keys set to False
 ## "irb-hostbit" is used for defining the IRB host bit, same used for v4/v6.
 ## "any-mac" is the mac for the IRB anycast gateway. 
@@ -68,5 +68,11 @@ connect-retry-interval: 2
 ##
 
 datavlans:
-  - {id: 200, vni: 100200, l3-enabled: False, vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: IOT_NETWORK}
-  - {id: 201, vni: 100201, l3-enabled: True, vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.200, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:200::", ip6-bitmask: 64, ip6-ll: "fe80:44:200::",  description: "campus"}
+  - {id: 200, vni: 100200, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: IOT_NETWORK}
+  - {id: 201, vni: 100201, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.200, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:200::", ip6-bitmask: 64, ip6-ll: "fe80:44:200::",  description: "campus"}
+
+l3vrf:
+  - name: campus
+    id: 101
+    t5vni: 199101
+

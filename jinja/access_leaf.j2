@@ -357,7 +357,6 @@ policy-options {
         }
     }
 }
-
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
 routing-instances {
     evpn_vs {
@@ -371,25 +370,69 @@ routing-instances {
         }
         vtep-source-interface lo0.0 inet6;
         service-type vlan-aware;
-{% for INT in USERINPUT['local-ints'] %}{% if INT['macvrf'] == evpn_vs %}
+{% for INT in USERINPUT['local-ints'] %}{% if INT['macvrf'] == "evpn_vs" %}
         interface {{ INT['int'] }};
 {% endif %}{% endfor %}
         route-distinguisher {% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:1;
         vrf-target target:{{ GLOBAL['overlay-rt']}}:1;
         vlans {
-            client-1099 {
-                vlan-id 1099;
-                l3-interface irb.1099;
+            default {
+                vlan-id 1;
+            }
+{% if USERINPUT['datavlans'] is defined %}{% for VNI in USERINPUT['datavlans'] %}
+            VLAN{{ VNI['id'] }} {
+                description "{{ VNI['description'] }}";
+                vlan-id {{ VNI['id'] }};
+{% if VNI['l3-enabled'] == True %}
+                l3-interface irb.{{ VNI['id'] }};
+{% endif %}
                 vxlan {
-                    vni 11099;
+                    vni {{ VNI['vni'] }};
                 }
             }
-            client-1033 {
-                vlan-id 1033;
-                l3-interface irb.1033;
+{% endfor %}{% endif %}
+{% for VNI in GLOBAL['datavlans'] %}
+            VLAN{{ VNI['id'] }} {
+                description "{{ VNI['description'] }}";
+                vlan-id {{ VNI['id'] }};
+{% if VNI['l3-enabled'] == True %}
+                l3-interface irb.{{ VNI['id'] }};
+{% endif %}
                 vxlan {
-                    vni 11033;
+                    vni {{ VNI['vni'] }};
+                }
+            }
+{% endfor %}
+        }
+    }
+{% for RI in GLOBAL['l3vrf'] %}
+    {{ RI['name']|upper }} {
+        instance-type vrf;
+        routing-options {
+            multipath;
+            auto-export;
+        }
+        protocols {
+            evpn {
+                ip-prefix-routes {
+                    advertise direct-nexthop;
+                    encapsulation vxlan;
+                    vni {{ RI['t5vni'] }};
+                    export EXPORT-T5;
                 }
             }
         }
-    }
+{# need to add dhcp-relay here #}
+        interface lo0.{% for LO in USERINPUT['loopbacks'] %}{% if LO['vrf'] == RI['name'] %}{{ LO['id'] }}{% endif %}{% endfor %};
+{% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+        interface irb.{{ IRB['id'] }};
+{% endif %}{% endfor %}{% endif %}
+{% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+        interface irb.{{ IRB['id'] }};
+{% endif %}{% endfor %}
+        route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
+        vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
+        vrf-table-label;
+}
+{% endfor %}
+{# need to add radius section, access/dot1x, eventually tacacs, logging, etc#}
