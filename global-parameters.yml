@@ -17,6 +17,14 @@ ntp:
 
 loginmsg: \n\n\n\t       * * *  W A R N I N G  * * *\n\tProperty of the XYZ\n\nIf you are not authorized to access this system, disconnect now.\nUsers of this system have no expectation of privacy. By continuing,\nyou consent to your keystrokes and data content being monitored.\n\n
 
+policy-prefix-list:
+  mgmt-nets: 
+    - 10.44.1.0/24
+  mgmt-nets-ipv6:
+    - 2001:db8:1::100/128
+  snmp-servers:
+    - 10.44.1.100/32
+
 
 ##############################################
 ## ssh section

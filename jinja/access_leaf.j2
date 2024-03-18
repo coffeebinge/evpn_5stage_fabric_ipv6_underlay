@@ -15,6 +15,10 @@
 {# need to add all of the inter-vlan multicast oism config #}
 {# why.. advertise-from-main-vpn-tables under proto bgp who added? #}
 
+{# 
+{%- include 'inc_re_protect_v4.j2' +%}
+{%- include 'inc_re_protect_v6.j2' +%}
+#}
 
 system {
     host-name {{ USERINPUT['hostname'] }};
@@ -406,6 +410,7 @@ protocols {
 {# need to add firewall section here, maybe include separate j2 #}
 {# need to add prefix-lists for firewall policy-options #}
 policy-options {
+{% include 'inc_re_protect_prefix_lists.j2' +%}
     policy-statement PFE-LB {
         then {
             load-balance per-packet;
