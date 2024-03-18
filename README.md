@@ -11,3 +11,4 @@ also need to create set format versions for some people who prefer it.
 
 need access leaf, spines, super spines(core) and border leaves
 
+I take no responsibility if any of this rendered config even works hah! heck it may not even be good syntax and commit error all over the place
