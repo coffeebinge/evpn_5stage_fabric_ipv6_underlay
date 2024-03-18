@@ -137,6 +137,7 @@ interfaces {
     }
 {% endfor %} {# end uplinks #}
 {# need to add regular interface config here #}
+{# need to add ae member and ae logical ints here #}
     vme {
         unit 0 {
             family inet {
@@ -330,6 +331,7 @@ protocols {
     }
 }
 {# need to add firewall section here, maybe include separate j2 #}
+{# need to add prefix-lists for firewall policy-options #}
 policy-options {
     policy-statement PFE-LB {
         then {
@@ -432,3 +434,4 @@ routing-instances {
 }
 {% endfor %}
 {# need to add radius section, access/dot1x, eventually tacacs, logging, etc#}
+{# add dhcp snooping to vlans, turn on dai/ipsg #}
