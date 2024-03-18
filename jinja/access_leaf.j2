@@ -359,3 +359,37 @@ policy-options {
 }
 
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
+routing-instances {
+    evpn_vs {
+        instance-type mac-vrf;
+        protocols {
+            evpn {
+                encapsulation vxlan;
+                default-gateway do-not-advertise;
+                extended-vni-list all;
+            }
+        }
+        vtep-source-interface lo0.0 inet6;
+        service-type vlan-aware;
+{% for INT in USERINPUT['local-ints'] %}{% if INT['macvrf'] == evpn_vs %}
+        interface {{ INT['int'] }};
+{% endif %}{% endfor %}
+        route-distinguisher {% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:1;
+        vrf-target target:{{ GLOBAL['overlay-rt']}}:1;
+        vlans {
+            client-1099 {
+                vlan-id 1099;
+                l3-interface irb.1099;
+                vxlan {
+                    vni 11099;
+                }
+            }
+            client-1033 {
+                vlan-id 1033;
+                l3-interface irb.1033;
+                vxlan {
+                    vni 11033;
+                }
+            }
+        }
+    }
