@@ -2,8 +2,8 @@
 {# template for ipv6 evpn underlay, starting lab build #}
 {# summarized list here, remove inline... #}
 {# add poe to devices that can use it #}
-{# add rstp to evpn_vs #}
-{#  NEED TO ADD SNMPv3 SECTION HERE #}
+
+
 {# need to add firewall section here, maybe include separate j2 #}
 {# need to add prefix-lists for firewall policy-options #}
 {# need to add dhcp-relay here #}
@@ -281,7 +281,6 @@ interfaces {
 {% endfor %}
     }
 }
-{#  NEED TO ADD SNMPv3 SECTION HERE #}
 {%- include 'inc_snmp.j2' +%}
 {# is forwarding-options vxlan shared tunnels needed, overlay-ecmp? #}
 forwarding-options {
@@ -323,6 +322,10 @@ protocols {
         interface all {
             version 2;
         }
+    }
+    rstp {
+        interface all;
+        bpdu-block-on-edge;
     }
 {% if GLOBAL['IPv6-RA'] == True %}{# need to configure RA guard #}
     router-advertisement {
@@ -443,6 +446,13 @@ routing-instances {
                 encapsulation vxlan;
                 default-gateway do-not-advertise;
                 extended-vni-list all;
+            }
+            rstp {
+{% for INT in USERINPUT['local-ints'] %}{% if INT['macvrf'] == "evpn_vs" %}
+                interface {{ INT['int'] }} edge;
+{% endif %}{% endfor %}
+                interface all;
+                bpdu-block-on-edge;
             }
         }
         vtep-source-interface lo0.0 inet6;
