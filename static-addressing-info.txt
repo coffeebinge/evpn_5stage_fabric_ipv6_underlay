@@ -26,39 +26,54 @@ core2         2001:db8:254::10/128
 border1       2001:db8:254::11/128
 border2       2001:db8:254::12/128
 
+Assuming the device models are:
+pod1-leaf1    EX4400-48MP
+pod1-leaf2    EX4400-48MP
+pod2-leaf1    QFX5120-48Y
+pod2-leaf2    QFX5120-48Y
+pod1-spine1   QFX5120-48Y
+pod1-spine2   QFX5120-48Y
+pod2-spine1   QFX5120-32C
+pod2-spine2   QFX5120-32C
+core1         QFX5120-32C
+core2         QFX5120-32C
+border1       QFX5120-48Y
+border2       QFX5120-48Y
+
+Re-map interfaces to your environment/hardware
 p2p  2001:db8:250::/64 (lower address on starting device - pod1-leaf1 :0, pod1-spine1 :1)
 pod1-leaf1
- to pod1-spine1  2001:db8:250::0/127
- to pod1-spine2  2001:db8:250::2/127
+  xe-0/2/0 to pod1-spine1 xe-0/0/0  2001:db8:250::0/127
+  xe-0/2/1 to pod1-spine2 xe-0/0/0  2001:db8:250::2/127
 pod1-leaf2
- to pod1-spine1  2001:db8:250::4/127
- to pod1-spine2  2001:db8:250::6/127
+  xe-0/2/0 to pod1-spine1 xe-0/0/1  2001:db8:250::4/127
+  xe-0/2/1 to pod1-spine2 xe-0/0/1  2001:db8:250::6/127
 pod2-leaf1
- to pod2-spine1  2001:db8:250::8/127
- to pod2-spine2  2001:db8:250::10/127
+  et-0/0/54 to pod2-spine1 et-0/0/0  2001:db8:250::8/127
+  et-0/0/55 to pod2-spine2 et-0/0/0  2001:db8:250::10/127
 pod2-leaf2
- to pod2-spine1  2001:db8:250::12/127
- to pod2-spine2  2001:db8:250::14/127
+  et-0/0/54 to pod2-spine1 et-0/0/1  2001:db8:250::12/127
+  et-0/0/55 to pod2-spine2 et-0/0/1  2001:db8:250::14/127
 
 pod1-spine1
- to core1    2001:db8:250::16/127
- to core2    2001:db8:250::18/127
+  et-0/0/54 to core1 et-0/0/0   2001:db8:250::16/127
+  et-0/0/55 to core2 et-0/0/0   2001:db8:250::18/127
 pod1-spine2
- to core1    2001:db8:250::20/127
- to core2    2001:db8:250::22/127
+  et-0/0/54 to core1 et-0/0/1   2001:db8:250::20/127
+  et-0/0/55 to core2 et-0/0/1   2001:db8:250::22/127
 pod2-spine1
- to core1    2001:db8:250::24/127
- to core2    2001:db8:250::26/127
+  et-0/0/30 to core1 et-0/0/2   2001:db8:250::24/127
+  et-0/0/31 to core2 et-0/0/2   2001:db8:250::26/127
 pod2-spine2
- to core1    2001:db8:250::28/127
- to core2    2001:db8:250::30/127
+  et-0/0/30 to core1 et-0/0/3   2001:db8:250::28/127
+  et-0/0/31 to core2 et-0/0/3   2001:db8:250::30/127
 
 core1
- to border1    2001:db8:250::32/127
- to border2    2001:db8:250::34/127
+  et-0/0/4 to border1 et-0/0/54   2001:db8:250::32/127
+  et-0/0/5 to border2 et-0/0/54   2001:db8:250::34/127
 core2
- to border1    2001:db8:250::36/127
- to border2    2001:db8:250::38/127
+  et-0/0/4 to border1 et-0/0/55   2001:db8:250::36/127
+  et-0/0/5 to border2 et-0/0/55   2001:db8:250::38/127
 
 
 ASN
