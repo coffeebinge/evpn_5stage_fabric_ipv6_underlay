@@ -485,6 +485,15 @@ routing-instances {
 {% if VNI['l3-enabled'] == True %}
                 l3-interface irb.{{ VNI['id'] }};
 {% endif %}
+{% if VNI['dhcp-snoop'] == True %}
+                forwarding-options {
+                    dhcp-security {
+                        arp-inspection;
+                        ip-source-guard;
+                        mine-dhcp-client-options;
+                        mine-dhcpv6-client-options;
+                    }
+{% endif %}
                 vxlan {
                     vni {{ VNI['vni'] }};
                 }
@@ -524,3 +533,7 @@ routing-instances {
 {% endfor %}
 {# need to add radius section, access/dot1x, eventually tacacs, logging, etc#}
 {# add dhcp snooping to vlans, turn on dai/ipsg #}
+{# need to add poe hw model check, if 4400 ok, if 5120 no #}
+poe {
+    interface all;
+}
