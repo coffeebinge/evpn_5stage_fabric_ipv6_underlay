@@ -1,25 +1,19 @@
 {# this is for an ERB leaf, covering ex4400 and qfx5120 to start #}
 {# template for ipv6 evpn underlay, starting lab build #}
 {# summarized list here, remove inline... #}
-{# add poe to devices that can use it #}
-
-
 {# need to add firewall section here, maybe include separate j2 #}
 {# need to add prefix-lists for firewall policy-options #}
 {# need to add dhcp-relay here #}
 {# need to add radius section, access/dot1x, eventually tacacs, logging, etc#}
-{# add dhcp snooping to vlans, turn on dai/ipsg #}
 {# need to add storm-control to interfaces #}
 {# need to add question for virtual-chassis to enable gres #}
 {# when we can, do a vc re mastership change while vtep active, does it flap? #}
 {# need to add all of the inter-vlan multicast oism config #}
 {# why.. advertise-from-main-vpn-tables under proto bgp who added? #}
-
 {# 
 {%- include 'inc_re_protect_v4.j2' +%}
 {%- include 'inc_re_protect_v6.j2' +%}
 #}
-
 system {
     host-name {{ USERINPUT['hostname'] }};
     auto-snapshot;
@@ -532,7 +526,6 @@ routing-instances {
 }
 {% endfor %}
 {# need to add radius section, access/dot1x, eventually tacacs, logging, etc#}
-{# add dhcp snooping to vlans, turn on dai/ipsg #}
 {# need to add poe hw model check, if 4400 ok, if 5120 no #}
 poe {
     interface all;

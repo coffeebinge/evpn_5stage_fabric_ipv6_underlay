@@ -27,14 +27,14 @@ bgp-neigh:
 
 
 uplinks:
-- int: et-0/0/53
-  description: "pod1-spine1 et-0/0/1"
+- int: xe-0/2/0
+  description: "pod1-spine1 xe-0/0/1"
   vlan-tagging: False
   mtu: 9192
   unit:
   - {id: 0, vlan-id: 1, addr-v4: 10.44.250.4, bitmask: 31, addr-v6: "2001:db8:250::4", v6-bitmask: 127, vrf: False}
-- int: et-0/0/54
-  description: "pod1-spine2 et-0/0/1"
+- int: xe-0/2/1
+  description: "pod1-spine2 xe-0/0/1"
   vlan-tagging: False
   mtu: 9192
   unit:

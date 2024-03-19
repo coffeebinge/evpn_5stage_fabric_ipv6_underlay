@@ -1,0 +1,48 @@
+---
+hostname: pod1-spine2
+mgmt-addr: 10.192.16.xxx ## need switch
+netmask: 255.255.254.0
+bitmask: 23
+defgw: 10.192.16.1
+
+
+loopbacks:
+  - {id: 0, addr-v4: 10.44.255.6, addr-v6: 2001:db8:255::6, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
+
+
+##################################################
+## Underlay BGP section
+local-as: 65006
+
+bgp-neigh:
+  - {ubgp-ip: "2001:db8:250::2", obgp-ip: "2001:db8:255::2", peer-as: 65001, bfd-int: 1000, bfd-mult: 3, desc: pod1-leaf1}
+  - {ubgp-ip: "2001:db8:250::6", obgp-ip: "2001:db8:255::6", peer-as: 65002, bfd-int: 1000, bfd-mult: 3, desc: pod1-leaf2}
+  - {ubgp-ip: "2001:db8:250::17", obgp-ip: "2001:db8:255::9", peer-as: 65009, bfd-int: 1000, bfd-mult: 3, desc: core1}
+  - {ubgp-ip: "2001:db8:250::19", obgp-ip: "2001:db8:255::10", peer-as: 65010, bfd-int: 1000, bfd-mult: 3, desc: core2}
+
+
+uplinks:
+- int: xe-0/0/0
+  description: "pod1-leaf1 xe-0/2/1"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.3, bitmask: 31, addr-v6: "2001:db8:250::3", v6-bitmask: 127, vrf: False}
+- int: xe-0/0/1
+  description: "pod1-leaf2 xe-0/2/1"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.7, bitmask: 31, addr-v6: "2001:db8:250::7", v6-bitmask: 127, vrf: False}
+- int: et-0/0/54
+  description: "core1 et-0/0/1"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.20, bitmask: 31, addr-v6: "2001:db8:250::20", v6-bitmask: 127, vrf: False}
+- int: et-0/0/55
+  description: "core2 et-0/0/1"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.22, bitmask: 31, addr-v6: "2001:db8:250::22", v6-bitmask: 127, vrf: False}

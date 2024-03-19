@@ -1,0 +1,286 @@
+{# this is for an ERB spine, covering qfx5120 to start #}
+{# template for ipv6 evpn underlay, starting lab build #}
+{# summarized list here, remove inline... #}
+{# need to add firewall section here, maybe include separate j2 #}
+{# need to add prefix-lists for firewall policy-options #}
+{# need to add all of the inter-vlan multicast oism config #}
+{# 
+{%- include 'inc_re_protect_v4.j2' +%}
+{%- include 'inc_re_protect_v6.j2' +%}
+#}
+system {
+    host-name {{ USERINPUT['hostname'] }};
+    auto-snapshot;
+    time-zone {{ GLOBAL['timezone'] }};
+    root-authentication {
+        encrypted-password "{{ CREDS['root'] }}";
+    }
+    commit {
+        synchronize;
+        no-delta-synchronize;
+    }
+    login {
+        message "{{ GLOBAL['loginmsg'] }}";
+        retry-options {
+            tries-before-disconnect 3;
+            backoff-threshold 1;
+            backoff-factor 6;
+            minimum-time 30;
+        }
+        class SUPER-USER-REMOTE {
+            idle-timeout 10;
+            permissions all;
+        }
+        user remote {
+            full-name AAA-Null-User;
+            uid 9999;
+            class SUPER-USER-REMOTE;
+        }
+{% for USER in CREDS['users'] %}
+        user {{ USER['name'] }} {
+            uid {{ USER['uid'] }};
+            class {{ USER['class'] }};
+            authentication {
+{% for AUTH in USER['auth'] %}
+                {{ AUTH['authtype'] }} "{{ AUTH['authvalue'] }}";
+{% endfor %}
+            }
+        }
+{% endfor %}
+    }
+    services {
+        ssh {
+            root-login {{ GLOBAL['root-login'] }};
+            protocol-version v2;
+            connection-limit {{ GLOBAL['ssh-connection-limit'] }};
+            rate-limit {{ GLOBAL['ssh-rate-limit'] }};
+        }
+        netconf {
+            ssh {
+                connection-limit {{ GLOBAL['nc-connection-limit'] }};
+                rate-limit {{ GLOBAL['nc-rate-limit'] }};
+            }
+            rfc-compliant;
+            yang-compliant;
+        }
+    }
+    internet-options {
+        tcp-drop-synfin-set;
+    }
+    authentication-order password;
+    ports {
+        console log-out-on-disconnect;
+        auxiliary {
+            disable;
+            insecure;
+        }
+    }
+    syslog {
+        user * {
+            any emergency;
+        }
+{% for syslog in GLOBAL['syslog']%}
+        host {{ syslog }} {
+            any notice;
+            authorization any;
+            firewall any;
+            interactive-commands any;
+            structured-data;
+        }
+{% endfor %}
+        file messages {
+            any any;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    name-server {
+{% for d in GLOBAL['dns']%}
+        {{ d }};
+{% endfor %}
+    }
+    ntp {
+{% for NTP in GLOBAL['ntp'] %}
+        server {{ NTP }};
+{% endfor %}
+    }
+}
+interfaces {
+{% for INTS in USERINPUT['uplinks'] %}{# begin uplinks #}
+    {{ INTS['int'] }} {
+        description "EVPN_UPLINK: {{ INTS['description'] }}";
+{% if INTS['vlan-tagging'] == True %}
+        vlan-tagging;
+{% endif %}
+        mtu {{ INTS['mtu'] }};
+{% for UNITS in INTS['unit'] %}
+        unit {{ UNITS['id'] }} {
+{% if INTS['vlan-tagging'] == True %}
+            vlan-id {{ UNITS['vlan-id'] }};
+{% endif %}
+            family inet {
+                address {{ UNITS['addr-v4'] }}/{{ UNITS['bitmask'] }};
+            }
+{% if not UNITS['addr-v6'] == False %}
+            family inet6 {
+                address {{ UNITS['addr-v6'] }}/{{ UNITS['v6-bitmask'] }};
+            }
+{% endif %}
+        }
+{% endfor %}
+    }
+{% endfor %} {# end uplinks #}
+    vme {
+        unit 0 {
+            family inet {
+                address {{ USERINPUT['mgmt-addr'] }}/{{ USERINPUT['bitmask'] }};
+            }
+        }
+    }
+    lo0 {
+{% for LOOP in USERINPUT['loopbacks'] %}
+        unit {{ LOOP['id'] }} {
+            family inet {
+{% if not LOOP['filter-v4'] == False and not GLOBAL['IPv4-lo0-filter'] == False %}
+                filter {
+                    input {{ LOOP['filter-v4'] }};
+                }
+{% endif %}
+                address {{ LOOP['addr-v4'] }}/32;
+            }
+{% if not LOOP['addr-v6'] == False %}
+            family inet6 {
+{% if not LOOP['filter-v6'] == False and not GLOBAL['IPv6-lo0-filter'] == False %}
+                filter {
+                    input {{ LOOP['filter-v6'] }};
+                }
+{% endif %}
+                address {{ LOOP['addr-v6'] }}/128;
+            }
+{% endif %}
+        }
+{% endfor %}
+    }
+}
+{%- include 'inc_snmp.j2' +%}
+forwarding-options {
+    storm-control-profiles default {
+        all;
+    }
+}
+routing-options {
+    static {
+{% for SR in GLOBAL['staticroutes'] %}
+        route {{ SR }} next-hop {{ USERINPUT['defgw'] }};
+{% endfor %}
+    }
+    router-id{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %};
+    authonomous-system {{ USERINPUT['local-as'] }};
+    forwarding-table {
+        export PFE-LB;
+        ecmp-fast-reroute;
+        chained-composite-next-hop {
+            ingress {
+                evpn;
+            }
+        }
+    }
+}
+protocols {
+    lldp {
+        port-id-subtype interface-name;
+        neighbour-port-info-display port-id;
+        interface all;
+    }
+    lldp-med {
+        interface all;
+    }
+    bgp {
+        group EVPN-UNDERLAY {
+            type external;
+            connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
+            mtu-discovery;
+            log-updown;
+            family inet6 {
+                unicast;
+            }
+            authentication-key "{{ CREDS['bgpkey'] }}"
+            export UNDERLAY-BGP-OUT;
+            local-as {{ USERINPUT['local-as'] }};
+            graceful-restart {
+                disable;
+            }
+            multipath {
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+            }
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['ubgp-ip'] == False %}
+            neighbor {{ NEIG['ubgp-ip'] }} {
+                description {{ NEIG['desc'] }};
+                peer-as {{ NEIG['peer-as'] }};
+            }
+{% endif %}{% endfor %}
+        }
+        group EVPN-OVERLAY {
+            type external;
+            multihop {
+                ttl 1;
+                no-nexthop-change;
+            }
+            connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};			
+            local-address{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %};
+            mtu-discovery;
+            log-updown;
+            family evpn {
+                signaling{
+                    loops 2;
+                }
+            }
+            authentication-key "{{ CREDS['bgpkey'] }}"
+            local-as {{ USERINPUT['local-as'] }};
+            graceful-restart {
+                disable;
+			}
+            multipath{
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+                session-mode automatic;
+            }
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['obgp-ip'] == False %}
+            neighbor {{ NEIG['obgp-ip'] }} {
+                description {{ NEIG['desc'] }};
+                peer-as {{ NEIG['peer-as'] }};
+                }
+            }
+{% endif %}{% endfor %}
+        }
+    }
+}
+{# need to add firewall section here, maybe include separate j2 #}
+{# need to add prefix-lists for firewall policy-options #}
+policy-options {
+{% include 'inc_re_protect_prefix_lists.j2' +%}
+    policy-statement PFE-LB {
+        then {
+            load-balance per-packet;
+        }
+    }
+    policy-statement UNDERLAY-BGP-OUT {
+        term ADVERTISE {
+            from {
+                protocol direct;
+                route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}/32 exact;
+                route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %}/128 exact;
+            }
+            then accept;
+        }
+    }
+}
