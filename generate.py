@@ -13,7 +13,7 @@ jenv = jinja2.Environment(loader=loader, trim_blocks=True, lstrip_blocks=True)
 leaf_t = jenv.get_template("access_leaf.j2")
 spine_t = jenv.get_template("spine.j2")
 core_t = jenv.get_template("core.j2")
-#border_t = jenv.get_template("border.j2")
+border_t = jenv.get_template("border.j2")
 
 
 ## get a list of devies by template type
@@ -29,8 +29,8 @@ with open('./devices/spine.list') as spineinv:
     spines = spineinv.readlines()
 with open('./devices/core.list') as coreinv:
     cores = coreinv.readlines()
-#with open('./devices/border.list') as borderinv:
-#    borders = borderinv.readlines()
+with open('./devices/border.list') as borderinv:
+    borders = borderinv.readlines()
 
 with open('global-parameters.yml') as global_yml:
     global_vars = yaml.safe_load(global_yml)
@@ -61,10 +61,10 @@ for core in cores:
         print(core_t.render(GLOBAL=global_vars, CREDS=cred_vars, USERINPUT=core_vars), file=f)
         f.close()
 
-#for border in borders:
-#    border = border.replace('\n', '')
-#    with open(border+'.yml') as border_yml:
-#        border_vars = yaml.safe_load(border_yml)
-#        f = open('configs/'+border+'.conf', 'w')
-#        print(border_t.render(GLOBAL=global_vars, CREDS=cred_vars, USERINPUT=border_vars), file=f)
-#        f.close()   
+for border in borders:
+    border = border.replace('\n', '')
+    with open('./devices/'+border+'.yml') as border_yml:
+        border_vars = yaml.safe_load(border_yml)
+        f = open('configs/'+border+'.conf', 'w')
+        print(border_t.render(GLOBAL=global_vars, CREDS=cred_vars, USERINPUT=border_vars), file=f)
+        f.close()   

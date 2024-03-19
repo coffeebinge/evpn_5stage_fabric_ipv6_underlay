@@ -48,13 +48,13 @@ uplinks:
   unit:
   - {id: 0, vlan-id: 1, addr-v4: 10.44.250.29, bitmask: 31, addr-v6: "2001:db8:250::29", v6-bitmask: 127, vrf: False}
 - int: et-0/0/4
-  description: "border1 et-0/0/54"
+  description: "border1 et-0/0/48"
   vlan-tagging: False
   mtu: 9192
   unit:
   - {id: 0, vlan-id: 1, addr-v4: 10.44.250.32, bitmask: 31, addr-v6: "2001:db8:250::32", v6-bitmask: 127, vrf: False}
 - int: et-0/0/5
-  description: "border2 et-0/0/54"
+  description: "border2 et-0/0/48"
   vlan-tagging: False
   mtu: 9192
   unit:
