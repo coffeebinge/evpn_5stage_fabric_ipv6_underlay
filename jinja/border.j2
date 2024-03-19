@@ -174,13 +174,17 @@ interfaces {
     }
 {% endfor %}
 {% endif %}
-{% if USERINPUT['ae-ints'] is defined %}
+{% if USERINPUT['ae-ints'] is defined %}{# NEED TO COME BACK TO THIS GARBAGE #}
 {% for INTS in USERINPUT['ae-ints'] %}
     ae{{ INTS['int'] }} {
         description "{{ INTS['desc'] }}";
 {% if INTS['mtu'] %}
         mtu {{ INTS['mtu'] }};
-{% endif %}{% if INTS['esi'] %}
+{% endif %}
+{% if INTS['vlan-tagging'] is defined %}
+        vlan-tagging;
+{% endif %}
+{% if INTS['esi'] %}
         esi {
             00:{{ '%02x' | format(USERINPUT['leaf-pair']) }}:{{ '%02x' | format(INTS['int']) }}:00:00:00:00:00:00:00;
             all-active;
@@ -192,6 +196,25 @@ interfaces {
                 system-id 00:00:5e:e4:31:57;
             }
         }
+{% if INTS['l3-enabled'] is defined %}{% if not INTS['l3-enabled'] == False %}
+{% for UNITS in INTS['unit'] %}
+        unit {{ UNITS['id'] }} {
+{% if INTS['vlan-tagging'] == True %}
+            vlan-id {{ UNITS['vlan-id'] }};
+{% endif %}
+{% if not UNITS['addr-v4'] == False %}
+            family inet {
+                address {{ UNITS['addr-v4'] }}/{{ UNITS['bitmask'] }};
+            }
+{% endif %}
+{% if not UNITS['addr-v6'] == False %}
+            family inet6 {
+                address {{ UNITS['addr-v6'] }}/{{ UNITS['v6-bitmask'] }};
+            }
+{% endif %}
+        }
+{% endfor %}{% endif %}
+{% if INTS['l3-enabled'] == False %}
         unit 0 {
             family ethernet-switching {
                 interface-mode {{ INTS['int-mode'] }};
@@ -200,6 +223,7 @@ interfaces {
                 }
             }
         }
+{% endif %}{% endif %}
     }
 {% endfor %}{% endif %}
 {# need to add storm-control to interfaces #}
@@ -479,6 +503,9 @@ routing-instances {
             }
         }
         interface lo0.{% for LO in USERINPUT['loopbacks'] %}{% if LO['vrf'] == RI['name'] %}{{ LO['id'] }}{% endif %}{% endfor %};
+{% for INT in USERINPUT['ae-ints'] %}{% if INT['l3-enabled'] == True %}{% for UNITS in INT['unit'] %}{% if UNITS['vrf'] == RI['name'] %}
+        interface ae{{ INT['int'] }}.{{ UNITS['id'] }};
+{% endif %}{% endfor %}{% endif %}{% endfor %}
         route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
         vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
         vrf-table-label;
