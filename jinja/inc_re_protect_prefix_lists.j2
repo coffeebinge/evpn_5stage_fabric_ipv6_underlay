@@ -3,11 +3,6 @@
         {{ IP }};
 {% endfor %}
     }
-    prefix-list MGMT-NETS-IPV6 {
-{% for IP in GLOBAL['policy-prefix-list']['mgmt-nets-ipv6']%}
-        {{ IP }};
-{% endfor %}
-    }
     prefix-list SNMP-SERVERS {
 {% for IP in GLOBAL['policy-prefix-list']['snmp-servers']%}
         {{ IP }};
