@@ -438,7 +438,7 @@ routing-instances {
         protocols {
             evpn {
                 encapsulation vxlan;
-                default-gateway do-not-advertise;
+                default-gateway no-gateway-community;  {# changing this from do-not-advertise for oism/sbd #}
                 extended-vni-list all;
             }
             rstp {
