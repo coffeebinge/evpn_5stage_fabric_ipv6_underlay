@@ -1,4 +1,4 @@
-#!/user/bin/env python
+#!/usr/bin/env python
 import jinja2
 import yaml
 import os
