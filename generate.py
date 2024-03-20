@@ -79,3 +79,6 @@ def generate_configs():
             f = open('configs/'+border+'.conf', 'w')
             print(border_t.render(GLOBAL=global_vars, CREDS=cred_vars, USERINPUT=border_vars), file=f)
             f.close()
+
+if __name__ == "__main__":
+    generate_configs()
