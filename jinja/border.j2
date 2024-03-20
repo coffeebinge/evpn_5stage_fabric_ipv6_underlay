@@ -302,7 +302,7 @@ routing-options {
 {% endfor %}
     }
     router-id{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %};
-    authonomous-system {{ USERINPUT['local-as'] }};
+    autonomous-system {{ USERINPUT['local-as'] }};
     forwarding-table {
         export PFE-LB;
         ecmp-fast-reroute;
@@ -406,7 +406,6 @@ protocols {
             neighbor {{ NEIG['obgp-ip'] }} {
                 description {{ NEIG['desc'] }};
                 peer-as {{ NEIG['peer-as'] }};
-                }
             }
 {% endif %}{% endfor %}
         }
