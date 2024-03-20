@@ -248,8 +248,8 @@ interfaces {
 {% endif %}
             mac {{ IRB['any-mac'] }};
         }
-    }
 {% endif %}{% endfor %}{% endif %}
+    }
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
         unit {{ LOOP['id'] }} {
