@@ -275,7 +275,7 @@ interfaces {
 {% endfor %}
     }
 }
-{%- include 'inc_snmp.j2' +%}
+{% include 'inc_snmp.j2' +%}
 {# is forwarding-options vxlan shared tunnels needed, overlay-ecmp? #}
 forwarding-options {
     storm-control-profiles default {
@@ -438,7 +438,8 @@ routing-instances {
         protocols {
             evpn {
                 encapsulation vxlan;
-                default-gateway no-gateway-community;  {# changing this from do-not-advertise for oism/sbd #}
+{# changing this from do-not-advertise for oism/sbd #}
+                default-gateway no-gateway-community;
                 extended-vni-list all;
             }
             rstp {
