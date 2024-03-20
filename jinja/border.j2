@@ -447,6 +447,7 @@ routing-instances {
                 default-gateway no-gateway-community;  {# changing this from do-not-advertise for oism/sbd #}
                 extended-vni-list all;
             }
+{# removing RSTP from mac-vrf (not allowed) 
             rstp {
 {% for INT in USERINPUT['local-ints'] %}{% if INT['macvrf'] == "evpn_vs" %}
                 interface {{ INT['int'] }} edge;
@@ -454,6 +455,7 @@ routing-instances {
                 interface all;
                 bpdu-block-on-edge;
             }
+#}
         }
         vtep-source-interface lo0.0 inet6;
         service-type vlan-aware;
