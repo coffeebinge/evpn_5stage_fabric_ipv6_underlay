@@ -52,8 +52,8 @@ IPv6-RA: True
 ## applied to the lo0 interface. If this is set to True, the firewall config will render. You'll also need to specify
 ## which filter (default is SERVICE-IN and SERVICE-IN-V6) under the loopback interface.
 ## Option is listed here for labs, normally we leave this True in Production, and for realistic lab/unit tests.
-IPv4-lo0-filter: True
-IPv6-lo0-filter: True
+IPv4-lo0-filter: False
+IPv6-lo0-filter: False
 
 # if you want to enable the GBP Profile, set to True
 gbp-enabled: True
