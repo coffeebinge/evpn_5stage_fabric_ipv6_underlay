@@ -80,5 +80,5 @@ ae-ints:
 
 datavlans:
   - {id: 3801, vni: 103801, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: WAN-RTR1}
-  - {id: 3802, vni: 103801, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: WAN-RTR2}
+  - {id: 3802, vni: 103802, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: WAN-RTR2}
  
