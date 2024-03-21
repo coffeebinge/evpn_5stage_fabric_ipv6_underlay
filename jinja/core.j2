@@ -203,7 +203,7 @@ protocols {
             connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
             mtu-discovery;
             log-updown;
-            family inet6 {
+            family inet {
                 unicast;
             }
             authentication-key "{{ CREDS['bgpkey'] }}"
@@ -221,6 +221,34 @@ protocols {
             }
 {% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['ubgp-ip'] == False %}
             neighbor {{ NEIG['ubgp-ip'] }} {
+                description {{ NEIG['desc'] }};
+                peer-as {{ NEIG['peer-as'] }};
+            }
+{% endif %}{% endfor %}
+        }
+        group EVPN-UNDERLAY-V6 {
+            type external;
+            connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
+            mtu-discovery;
+            log-updown;
+            family inet6 {
+                unicast;
+            }
+            authentication-key "{{ CREDS['bgpkey'] }}"
+            export UNDERLAY-BGP-OUT-V6;
+            local-as {{ USERINPUT['local-as'] }};
+            graceful-restart {
+                disable;
+            }
+            multipath {
+                multiple-as;
+            }
+            bfd-liveness-detection {
+                minimum-interval 1000;
+                multiplier 3;
+            }
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['ubgp-ip'] == False %}
+            neighbor {{ NEIG['ubgp-ip6'] }} {
                 description {{ NEIG['desc'] }};
                 peer-as {{ NEIG['peer-as'] }};
             }
@@ -255,7 +283,7 @@ protocols {
                 session-mode automatic;
             }
 {% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['obgp-ip'] == False %}
-            neighbor {{ NEIG['obgp-ip'] }} {
+            neighbor {{ NEIG['obgp-ip6'] }} {
                 description {{ NEIG['desc'] }};
                 peer-as {{ NEIG['peer-as'] }};
             }
@@ -277,6 +305,14 @@ policy-options {
             from {
                 protocol direct;
                 route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}/32 exact;
+            }
+            then accept;
+        }
+    }
+    policy-statement UNDERLAY-BGP-OUT-V6 {
+        term ADVERTISE {
+            from {
+                protocol direct;
                 route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %}/128 exact;
             }
             then accept;

@@ -22,8 +22,8 @@ loopbacks:
 local-as: 65001
 
 bgp-neigh:
-  - {ubgp-ip: "2001:db8:250::1", obgp-ip: "2001:db8:255::5", peer-as: 65005, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine1}
-  - {ubgp-ip: "2001:db8:250::3", obgp-ip: "2001:db8:255::6", peer-as: 65006, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine2}
+  - {ubgp-ip: 10.44.250.1, ubgp-ip6: "2001:db8:250::1", obgp-ip6: "2001:db8:255::5", peer-as: 65005, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine1}
+  - {ubgp-ip: 10.44.250.3, ubgp-ip6: "2001:db8:250::3", obgp-ip6: "2001:db8:255::6", peer-as: 65006, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine2}
 
 
 uplinks:
