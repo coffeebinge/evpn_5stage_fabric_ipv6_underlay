@@ -341,7 +341,9 @@ protocols {
     bgp {
         group EVPN-UNDERLAY {
             type external;
+{% if not GLOBAL['connect-retry-interval'] == False %}
             connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
+{% endif %}
             mtu-discovery;
             log-updown;
             family inet {
@@ -369,7 +371,9 @@ protocols {
         }
         group EVPN-UNDERLAY-V6 {
             type external;
+{% if not GLOBAL['connect-retry-interval'] == False %}
             connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
+{% endif %}
             mtu-discovery;
             log-updown;
             family inet6 {
@@ -401,7 +405,9 @@ protocols {
                 ttl 1;
                 no-nexthop-change;
             }
-            connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};			
+{% if not GLOBAL['connect-retry-interval'] == False %}
+            connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
+{% endif %}
             local-address{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %};
             mtu-discovery;
             log-updown;
