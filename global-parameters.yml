@@ -83,6 +83,8 @@ connect-retry-interval: 2
 ##  - {id: 1001, l3-enabled: True, vrf: campus, any-mac: "00:00:10:01:00:01", ip-prefix: 10.1.0, bitmask: 16, v6-mac: "00:06:10:01:00:01", ip6-prefix: "2001:db8:a1:0::", ip6-bitmask: 64, ip6-ll: "fe80::10:01:00:01", irb-virt: 1, description: campus}
 ##
 
+## NOTE: I should change the link local ipv6 to be fe80::x:y:z:blah... 
+
 datavlans:
   - {id: 106, vni: 100106, dhcp-snoop: True, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.106, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:106::", ip6-bitmask: 64, ip6-ll: "fe80:44:106::",  description: "campus"}
   - {id: 107, vni: 100107, dhcp-snoop: True, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.107, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:107::", ip6-bitmask: 64, ip6-ll: "fe80:44:107::",  description: "campus"}
