@@ -338,6 +338,12 @@ protocols {
         }
     }
     rstp {
+{% for INT in USERINPUT['local-ints'] %}{% if INT['macvrf'] == "evpn_vs" %}
+        interface {{ INT['int'] }} edge;
+{% endif %}{% endfor %}
+{% for INT in USERINPUT['ae-ints'] %}{% if INT['macvrf'] == "evpn_vs" %}
+        interface {{ INT['int'] }} edge;
+{% endif %}{% endfor %}
         interface all;
         bpdu-block-on-edge;
     }
