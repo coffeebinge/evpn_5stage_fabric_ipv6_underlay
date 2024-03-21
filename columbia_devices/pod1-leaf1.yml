@@ -1,0 +1,64 @@
+---
+hostname: pod1-leaf1
+mgmt-addr: 10.192.16.135
+netmask: 255.255.254.0
+bitmask: 23
+defgw: 10.192.16.1
+
+
+## add chassis device count for AE
+ae-count: 48
+## evpn info
+pod: 1
+leaf-pair: 1   ## please use decimal values 1-255
+
+## Special note: if you want an IPv6 only underlay, please still set an IPv4 lo0.0 addr-v4 address to be used for a Router-ID. Set the global parameter disable-ipv4-underlay to True for a v6 only underlay.
+loopbacks:
+  - {id: 0, addr-v4: 10.44.255.1, addr-v6: 2001:db8:255::1, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
+  - {id: 1, addr-v4: 10.44.254.1, addr-v6: 2001:db8:254::1, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: campus}
+
+##################################################
+## Underlay BGP section
+local-as: 65001
+
+bgp-neigh:
+  - {ubgp-ip: 10.44.250.1, ubgp-ip6: "2001:db8:250::1", obgp-ip6: "2001:db8:255::5", peer-as: 65005, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine1}
+  - {ubgp-ip: 10.44.250.3, ubgp-ip6: "2001:db8:250::3", obgp-ip6: "2001:db8:255::6", peer-as: 65006, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine2}
+
+
+uplinks:
+- int: xe-0/2/0
+  description: "pod1-spine1 xe-0/0/0"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.0, bitmask: 31, addr-v6: "2001:db8:250::0", v6-bitmask: 127, vrf: False}
+- int: xe-0/2/1
+  description: "DO NOT HAVE - pod1-spine2 xe-0/0/0"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.2, bitmask: 31, addr-v6: "2001:db8:250::2", v6-bitmask: 127, vrf: False}
+
+## local interfaces (if ethernet-switching phy - set addr-v4/etc to False, set int-mode to access/trunk))
+local-ints:
+  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN101 ]"}
+  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101 VLAN106 ]"}
+
+ae-members:
+  - {int: "mge-0/0/2", ae-id: 2, desc: "ae2 test local AE"}
+  - {int: "mge-0/0/3", ae-id: 3, desc: "ae3 test with ESI"}
+
+ae-ints:
+  - {int: 2, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN106 ]"}
+  - {int: 3, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: True, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101 VLAN106 ]"}
+
+
+## locally significant vlans
+#example
+#datavlans:
+#  - {id: 9, vni: 100009, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: IOT_NETWORK}
+#  - {id: 114, vni: 100114, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.11, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:11::", ip6-bitmask: 64, ip6-ll: "fe80:44:11::",  description: "campus"}
+
+datavlans:
+  - {id: 101, vni: 100101, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.101, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:101::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:101:", description: "campus"}

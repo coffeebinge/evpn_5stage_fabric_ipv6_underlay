@@ -1,0 +1,48 @@
+---
+hostname: pod2-spine2
+mgmt-addr: 10.192.16.xxx ## need switch
+netmask: 255.255.254.0
+bitmask: 23
+defgw: 10.192.16.1
+
+## Special note: if you want an IPv6 only underlay, please still set an IPv4 lo0.0 addr-v4 address to be used for a Router-ID. Set the global parameter disable-ipv4-underlay to True for a v6 only underlay.
+loopbacks:
+  - {id: 0, addr-v4: 10.44.255.8, addr-v6: 2001:db8:255::8, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
+
+
+##################################################
+## Underlay BGP section
+local-as: 65008
+
+bgp-neigh:
+  - {ubgp-ip: 10.44.250.10, ubgp-ip6: "2001:db8:250::10", obgp-ip6: "2001:db8:255::3", peer-as: 65003, bfd-int: 1000, bfd-mult: 3, desc: pod2-leaf1}
+  - {ubgp-ip: 10.44.250.14, ubgp-ip6: "2001:db8:250::14", obgp-ip6: "2001:db8:255::4", peer-as: 65004, bfd-int: 1000, bfd-mult: 3, desc: pod2-leaf2}
+  - {ubgp-ip: 10.44.250.29, ubgp-ip6: "2001:db8:250::29", obgp-ip6: "2001:db8:255::9", peer-as: 65009, bfd-int: 1000, bfd-mult: 3, desc: core1}
+  - {ubgp-ip: 10.44.250.31, ubgp-ip6: "2001:db8:250::31", obgp-ip6: "2001:db8:255::10", peer-as: 65010, bfd-int: 1000, bfd-mult: 3, desc: core2}
+
+
+uplinks:
+- int: et-0/0/0
+  description: "pod2-leaf1 et-0/0/55"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.11, bitmask: 31, addr-v6: "2001:db8:250::11", v6-bitmask: 127, vrf: False}
+- int: et-0/0/1
+  description: "pod2-leaf2 et-0/0/55"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.15, bitmask: 31, addr-v6: "2001:db8:250::15", v6-bitmask: 127, vrf: False}
+- int: et-0/0/30
+  description: "core1 et-0/0/3"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.28, bitmask: 31, addr-v6: "2001:db8:250::28", v6-bitmask: 127, vrf: False}
+- int: et-0/0/31
+  description: "core2 et-0/0/3"
+  vlan-tagging: False
+  mtu: 9192
+  unit:
+  - {id: 0, vlan-id: 1, addr-v4: 10.44.250.30, bitmask: 31, addr-v6: "2001:db8:250::30", v6-bitmask: 127, vrf: False}
