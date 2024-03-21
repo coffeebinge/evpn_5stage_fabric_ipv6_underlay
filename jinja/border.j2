@@ -253,7 +253,9 @@ interfaces {
 {% if not IRB['ip6-prefix'] == False %}
             family inet6 {
                 address {{ IRB['ip6-prefix'] }}{{ IRB['irb-hostbit'] }}/{{ IRB['ip6-bitmask'] }};
+{% if not GLOBAL['disable-ipv6-ll'] == True %}
                 address {{ IRB['ip6-ll'] }}{{ IRB['irb-hostbit'] }}/64;
+{% endif %}
             }
 {% endif %}
             mac {{ IRB['any-mac'] }};
