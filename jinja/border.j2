@@ -138,9 +138,11 @@ interfaces {
 {% if INTS['vlan-tagging'] == True %}
             vlan-id {{ UNITS['vlan-id'] }};
 {% endif %}
+{% if not GLOBAL['disable-ipv4-underlay'] == True %}
             family inet {
                 address {{ UNITS['addr-v4'] }}/{{ UNITS['bitmask'] }};
             }
+{% endif %}
 {% if not UNITS['addr-v6'] == False %}
             family inet6 {
                 address {{ UNITS['addr-v6'] }}/{{ UNITS['v6-bitmask'] }};
@@ -260,6 +262,14 @@ interfaces {
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
         unit {{ LOOP['id'] }} {
+{% if GLOBAL['disable-ipv4-underlay'] == True and LOOP['id'] == 0 and GLOBAL['IPv4-lo0-filter'] == False %}
+{% elif GLOBAL['disable-ipv4-underlay'] == True and LOOP['id'] == 0 and GLOBAL['IPv4-lo0-filter'] %}
+            family inet {
+                filter {
+                    input {{ LOOP['filter-v4'] }};
+                }
+            } 
+{% else %}
             family inet {
 {% if not LOOP['filter-v4'] == False and not GLOBAL['IPv4-lo0-filter'] == False %}
                 filter {
@@ -268,6 +278,7 @@ interfaces {
 {% endif %}
                 address {{ LOOP['addr-v4'] }}/32;
             }
+{% endif %}
 {% if not LOOP['addr-v6'] == False %}
             family inet6 {
 {% if not LOOP['filter-v6'] == False and not GLOBAL['IPv6-lo0-filter'] == False %}
@@ -346,6 +357,7 @@ protocols {
         interface all;
     }
     bgp {
+{% if not GLOBAL['disable-ipv4-underlay'] == True %}
         group EVPN-UNDERLAY {
             type external;
 {% if not GLOBAL['connect-retry-interval'] == False %}
@@ -376,6 +388,7 @@ protocols {
             }
 {% endif %}{% endfor %}
         }
+{% endif %}
         group EVPN-UNDERLAY-V6 {
             type external;
 {% if not GLOBAL['connect-retry-interval'] == False %}
@@ -454,6 +467,7 @@ policy-options {
             load-balance per-packet;
         }
     }
+{% if not GLOBAL['disable-ipv4-underlay'] == True %}
     policy-statement UNDERLAY-BGP-OUT {
         term ADVERTISE {
             from {
@@ -463,6 +477,7 @@ policy-options {
             then accept;
         }
     }
+{% endif %}
     policy-statement UNDERLAY-BGP-OUT-V6 {
         term ADVERTISE {
             from {

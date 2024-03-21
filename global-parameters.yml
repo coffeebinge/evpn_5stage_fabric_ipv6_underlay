@@ -59,7 +59,7 @@ IPv6-lo0-filter: False
 gbp-enabled: True
 
 # if you want to make the Underlay IPv6 Only, set to True
-disable-ipv4-underlay: True
+disable-ipv4-underlay: False
 
 ###############################################################################################
 ## BGP section  (find bgp neighbors definitions for underlay/overlay in each device yaml file)

@@ -12,7 +12,7 @@ ae-count: 48
 pod: 2
 leaf-pair: 2   ## please use decimal values 1-255
 
-
+## Special note: if you want an IPv6 only underlay, please still set an IPv4 lo0.0 addr-v4 address to be used for a Router-ID. Set the global parameter disable-ipv4-underlay to True for a v6 only underlay.
 loopbacks:
   - {id: 0, addr-v4: 10.44.255.3, addr-v6: 2001:db8:255::3, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
   - {id: 1, addr-v4: 10.44.254.3, addr-v6: 2001:db8:254::3, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: campus}

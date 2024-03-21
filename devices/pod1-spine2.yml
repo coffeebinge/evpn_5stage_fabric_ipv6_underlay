@@ -5,7 +5,7 @@ netmask: 255.255.254.0
 bitmask: 23
 defgw: 10.192.16.1
 
-
+## Special note: if you want an IPv6 only underlay, please still set an IPv4 lo0.0 addr-v4 address to be used for a Router-ID. Set the global parameter disable-ipv4-underlay to True for a v6 only underlay.
 loopbacks:
   - {id: 0, addr-v4: 10.44.255.6, addr-v6: 2001:db8:255::6, filter-v4: SERVICE-IN, filter-v6: SERVICE-IN-V6, vrf: inet.0}
 
