@@ -565,5 +565,6 @@ routing-instances {
         route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
         vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
         vrf-table-label;
+    }
 }
 {% endfor %}
