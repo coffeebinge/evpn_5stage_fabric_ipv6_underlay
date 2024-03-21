@@ -23,7 +23,7 @@ local-as: 65012
 
 bgp-neigh:
   - {ubgp-ip: 10.44.250.34, ubgp-ip6: "2001:db8:250::34", obgp-ip6: "2001:db8:255::9", peer-as: 65009, bfd-int: 1000, bfd-mult: 3, desc: core1}
-  - {ubgp-ip: 10.44.250.38, ubgp-ip6: "2001:db8:250::38", obgp-ip6: "2001:db8:255::10", peer-as: 65010, bfd-int: 1000, bfd-mult: 3, desc: core2}
+#  - {ubgp-ip: 10.44.250.38, ubgp-ip6: "2001:db8:250::38", obgp-ip6: "2001:db8:255::10", peer-as: 65010, bfd-int: 1000, bfd-mult: 3, desc: core2}
 
 
 uplinks:
