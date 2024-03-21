@@ -341,15 +341,6 @@ protocols {
         interface all;
         bpdu-block-on-edge;
     }
-{% if GLOBAL['IPv6-RA'] == True %}{# need to configure RA guard #}
-    router-advertisement {
-{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}{% if not IRB['ip6-prefix'] == False %}
-        interface irb.{{ IRB['id'] }} {
-            prefix {{ IRB['ip6-prefix'] }}/{{ IRB['ip6-bitmask'] }};
-        }
-{% endif %}{% endif %}{% endfor %}
-    }
-{% endif %}
     lldp {
         port-id-subtype interface-name;
         neighbour-port-info-display port-id;
