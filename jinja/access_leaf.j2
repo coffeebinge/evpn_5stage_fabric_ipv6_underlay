@@ -569,7 +569,7 @@ routing-instances {
         }
     }
 {% for RI in GLOBAL['l3vrf'] %}
-    {{ RI['name']|upper }} {
+    {{ RI['name']}} {
         instance-type vrf;
         routing-options {
             multipath;
