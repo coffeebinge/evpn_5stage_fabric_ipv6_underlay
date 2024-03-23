@@ -42,8 +42,8 @@ uplinks:
 
 ## local interfaces (if ethernet-switching phy - set addr-v4/etc to False, set int-mode to access/trunk))
 local-ints:
-  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN101 ]"}
-  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101 VLAN106 ]"}
+  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN102 ]"}
+  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN102 VLAN106 ]"}
 
 ae-members:
   - {int: "mge-0/0/2", ae-id: 2, desc: "ae2 test local AE"}
@@ -51,7 +51,7 @@ ae-members:
 
 ae-ints:
   - {int: 2, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN106 ]"}
-  - {int: 33, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: True, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101 VLAN106 ]"}
+  - {int: 3, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: True, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN102 VLAN106 ]"}
 
 
 ## locally significant vlans
