@@ -1,5 +1,5 @@
 ---
-hostname: border2
+hostname: D3-48Y-BL
 mgmt-addr: 10.192.16.133
 netmask: 255.255.254.0
 bitmask: 23

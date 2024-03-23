@@ -1,5 +1,5 @@
 ---
-hostname: core1
+hostname: D4-32C-CORE
 mgmt-addr: 10.192.16.110
 netmask: 255.255.254.0
 bitmask: 23

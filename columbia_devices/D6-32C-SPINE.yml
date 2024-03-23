@@ -1,5 +1,5 @@
 ---
-hostname: pod2-spine1
+hostname: D6-32C-SPINE
 mgmt-addr: 10.192.16.111
 netmask: 255.255.254.0
 bitmask: 23

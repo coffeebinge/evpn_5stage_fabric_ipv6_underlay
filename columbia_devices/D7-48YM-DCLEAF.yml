@@ -1,5 +1,5 @@
 ---
-hostname: pod2-leaf1
+hostname: D7-48YM-DCLEAF
 mgmt-addr: 10.192.16.109
 netmask: 255.255.254.0
 bitmask: 23
