@@ -519,7 +519,8 @@ routing-instances {
         protocols {
             evpn {
                 encapsulation vxlan;
-                default-gateway no-gateway-community;  {# changing this from do-not-advertise for oism/sbd #}
+{# changing this from do-not-advertise to no-gateway-community for oism/sbd #}
+                default-gateway do-not-advertise;
                 extended-vni-list all;
             }
 {# removing RSTP from mac-vrf (not allowed) 
@@ -540,11 +541,13 @@ routing-instances {
 {% for INT in USERINPUT['ae-ints'] %}{% if INT['macvrf'] == "evpn_vs" %}
         interface ae{{ INT['int'] }};
 {% endif %}{% endfor %}
-        route-distinguisher {% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:1;
-        vrf-target {                    
+        route-distinguisher {% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %}{{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:1;
+        vrf-target target:{{ GLOBAL['overlay-rt']}}:1;
+{#         vrf-target {                    
             target:{{ GLOBAL['overlay-rt']}}:1;
             auto;
         }
+#}
         vlans {
             default {
                 vlan-id 4090;
