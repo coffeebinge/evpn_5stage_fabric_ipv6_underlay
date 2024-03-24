@@ -280,7 +280,11 @@ protocols {
 {% if not GLOBAL['connect-retry-interval'] == False %}
             connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
 {% endif %}
+{% if GLOBAL['ipv4-underlay'] == True %}
+            local-address{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %};
+{% else %}
             local-address{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %};
+{% endif %}
             mtu-discovery;
             log-updown;
             family evpn {
@@ -301,12 +305,21 @@ protocols {
                 multiplier 3;
                 session-mode automatic;
             }
+{% if GLOBAL['ipv4-underlay'] == True %}
 {% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['obgp-ip'] == False %}
+            neighbor {{ NEIG['obgp-ip'] }} {
+                description {{ NEIG['desc'] }};
+                peer-as {{ NEIG['peer-as'] }};
+            }
+{% endif %}{% endfor %}
+{% else %}
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['obgp-ip6'] == False %}
             neighbor {{ NEIG['obgp-ip6'] }} {
                 description {{ NEIG['desc'] }};
                 peer-as {{ NEIG['peer-as'] }};
             }
 {% endif %}{% endfor %}
+{% endif %}
         }
     }
 }

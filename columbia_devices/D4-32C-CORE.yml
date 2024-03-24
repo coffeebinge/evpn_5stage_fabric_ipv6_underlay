@@ -15,12 +15,12 @@ loopbacks:
 local-as: 65009
 
 bgp-neigh:
-  - {ubgp-ip: 10.44.250.16, ubgp-ip6: "2001:db8:250::16", obgp-ip6: "2001:db8:255::5", peer-as: 65005, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine1}
-#  - {ubgp-ip: 10.44.250.20, ubgp-ip6: "2001:db8:250::20", obgp-ip6: "2001:db8:255::6", peer-as: 65006, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine2}
-  - {ubgp-ip: 10.44.250.24, ubgp-ip6: "2001:db8:250::24", obgp-ip6: "2001:db8:255::7", peer-as: 65007, bfd-int: 1000, bfd-mult: 3, desc: pod2-spine1}
-#  - {ubgp-ip: 10.44.250.28, ubgp-ip6: "2001:db8:250::28", obgp-ip6: "2001:db8:255::8", peer-as: 65008, bfd-int: 1000, bfd-mult: 3, desc: pod2-spine2}
-  - {ubgp-ip: 10.44.250.33, ubgp-ip6: "2001:db8:250::33", obgp-ip6: "2001:db8:255::11", peer-as: 65011, bfd-int: 1000, bfd-mult: 3, desc: border1}
-  - {ubgp-ip: 10.44.250.35, ubgp-ip6: "2001:db8:250::35", obgp-ip6: "2001:db8:255::12", peer-as: 65012, bfd-int: 1000, bfd-mult: 3, desc: border2}
+  - {ubgp-ip: 10.44.250.16, ubgp-ip6: "2001:db8:250::16", obgp-ip: 10.44.255.5, obgp-ip6: "2001:db8:255::5", peer-as: 65005, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine1}
+#  - {ubgp-ip: 10.44.250.20, ubgp-ip6: "2001:db8:250::20", obgp-ip: 10.44.255.6, obgp-ip6: "2001:db8:255::6", peer-as: 65006, bfd-int: 1000, bfd-mult: 3, desc: pod1-spine2}
+  - {ubgp-ip: 10.44.250.24, ubgp-ip6: "2001:db8:250::24", obgp-ip: 10.44.255.7, obgp-ip6: "2001:db8:255::7", peer-as: 65007, bfd-int: 1000, bfd-mult: 3, desc: pod2-spine1}
+#  - {ubgp-ip: 10.44.250.28, ubgp-ip6: "2001:db8:250::28", obgp-ip: 10.44.255.7, obgp-ip6: "2001:db8:255::8", peer-as: 65008, bfd-int: 1000, bfd-mult: 3, desc: pod2-spine2}
+  - {ubgp-ip: 10.44.250.33, ubgp-ip6: "2001:db8:250::33", obgp-ip: 10.44.255.11, obgp-ip6: "2001:db8:255::11", peer-as: 65011, bfd-int: 1000, bfd-mult: 3, desc: border1}
+  - {ubgp-ip: 10.44.250.35, ubgp-ip6: "2001:db8:250::35", obgp-ip: 10.44.255.12, obgp-ip6: "2001:db8:255::12", peer-as: 65012, bfd-int: 1000, bfd-mult: 3, desc: border2}
 
 uplinks:
 - int: et-0/0/6

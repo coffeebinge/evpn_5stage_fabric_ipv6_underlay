@@ -241,9 +241,9 @@ interfaces {
             }
         }
     }
-{# removing IRB for the border leaf for now
-{% if USERINPUT['datavlans'] is defined %}
     irb {
+{# gratuitous-arp-reply;   ### is this needed? #}
+{% if USERINPUT['datavlans'] is defined %}
 {% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3-enabled'] == True %}
         unit {{ IRB['id'] }} {
             description "{{ IRB['description'] }}";
@@ -260,7 +260,26 @@ interfaces {
 {% endif %}
             mac {{ IRB['any-mac'] }};
         }
-{% endif %}{% endfor %}{% endif %}   end of comment for IRB #}
+{% endif %}{% endfor %}{% endif %}
+{%if GLOBAL['datavlans'] is defined %}
+{% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3-enabled'] == True %}
+        unit {{ IRB['id'] }} {
+            description "{{ IRB['description'] }}";
+            family inet {
+                address {{ IRB['ip-prefix'] }}.{{ IRB['irb-hostbit'] }}/{{ IRB['bitmask'] }};
+            }
+{% if not IRB['ip6-prefix'] == False %}
+            family inet6 {
+                address {{ IRB['ip6-prefix'] }}{{ IRB['irb-hostbit'] }}/{{ IRB['ip6-bitmask'] }};
+{% if not GLOBAL['disable-ipv6-ll'] == True %}
+                address {{ IRB['ip6-ll'] }}{{ IRB['irb-hostbit'] }}/64;
+{% endif %}
+            }
+{% endif %}
+            mac {{ IRB['any-mac'] }};
+        }
+{% endif %}{% endfor %}{% endif %}
+    }
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
         unit {{ LOOP['id'] }} {
@@ -301,9 +320,11 @@ forwarding-options {
     storm-control-profiles default {
         all;
     }
+{% if GLOBAL['ipv4-underlay'] == False %}
     evpn-vxlan {
         shared-tunnels;
     }
+{% endif %}
     vxlan-routing {
         overlay-ecmp;
     }
@@ -326,6 +347,13 @@ routing-options {
         }
     }
 }
+{% if GLOBAL['ipv4-underlay'] == True %}
+switch-options {
+    vtep-source-interface lo0.0;
+    route-distinguisher {% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %}{{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:1;
+    vrf-target target:{{ GLOBAL['overlay-rt']}}:1;
+}
+{% endif %}
 protocols {
     igmp {
         interface all {
@@ -355,6 +383,13 @@ protocols {
     lldp-med {
         interface all;
     }
+{% if GLOBAL['ipv4-underlay'] == True %}
+    evpn {
+        extended-vni-list all;
+        encapsulation vxlan;
+        default-gateway do-not-advertise;
+    }
+{% endif %}
     bgp {
 {% if not GLOBAL['disable-ipv4-underlay'] == True %}
         group EVPN-UNDERLAY {
@@ -411,7 +446,7 @@ protocols {
                 minimum-interval 1000;
                 multiplier 3;
             }
-{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['ubgp-ip'] == False %}
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['ubgp-ip6'] == False %}
             neighbor {{ NEIG['ubgp-ip6'] }} {
                 description {{ NEIG['desc'] }};
                 peer-as {{ NEIG['peer-as'] }};
@@ -427,7 +462,11 @@ protocols {
 {% if not GLOBAL['connect-retry-interval'] == False %}
             connect-retry-interval {{ GLOBAL['connect-retry-interval'] }};
 {% endif %}
+{% if GLOBAL['ipv4-underlay'] == True %}
+            local-address{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %};
+{% else %}
             local-address{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v6'] }}{% endif %}{% endfor %};
+{% endif %}
             mtu-discovery;
             log-updown;
             family evpn {
@@ -448,12 +487,21 @@ protocols {
                 multiplier 3;
                 session-mode automatic;
             }
+{% if GLOBAL['ipv4-underlay'] == True %}
 {% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['obgp-ip'] == False %}
+            neighbor {{ NEIG['obgp-ip'] }} {
+                description {{ NEIG['desc'] }};
+                peer-as {{ NEIG['peer-as'] }};
+            }
+{% endif %}{% endfor %}
+{% else %}
+{% for NEIG in USERINPUT['bgp-neigh'] %}{% if not NEIG['obgp-ip6'] == False %}
             neighbor {{ NEIG['obgp-ip6'] }} {
                 description {{ NEIG['desc'] }};
                 peer-as {{ NEIG['peer-as'] }};
             }
 {% endif %}{% endfor %}
+{% endif %}
         }
     }
 }
@@ -514,6 +562,7 @@ policy-options {
 }
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
 routing-instances {
+{% if GLOBAL['ipv4-underlay'] == False %}
     evpn_vs {
         instance-type mac-vrf;
         protocols {
@@ -550,7 +599,7 @@ routing-instances {
 #}
         vlans {
             default {
-                vlan-id 4090;
+                vlan-id 1;
             }
 {% if USERINPUT['datavlans'] is defined %}{% for VNI in USERINPUT['datavlans'] %}
             VLAN{{ VNI['id'] }} {
@@ -575,6 +624,7 @@ routing-instances {
 {% endif %}{% endfor %}
         }
     }
+{% endif %}
 {% for RI in GLOBAL['l3vrf'] %}
     {{ RI['name'] }} {
         instance-type vrf;
@@ -596,9 +646,63 @@ routing-instances {
 {% for INT in USERINPUT['ae-ints'] %}{% if INT['l3-enabled'] == True %}{% for UNITS in INT['unit'] %}{% if UNITS['vrf'] == RI['name'] %}
         interface ae{{ INT['int'] }}.{{ UNITS['id'] }};
 {% endif %}{% endfor %}{% endif %}{% endfor %}
+{% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+        interface irb.{{ IRB['id'] }};
+{% endif %}{% endfor %}{% endif %}
+{% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+        interface irb.{{ IRB['id'] }};
+{% endif %}{% endfor %}
         route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
         vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
         vrf-table-label;
     }
 }
 {% endfor %}
+{% if GLOBAL['ipv4-underlay'] == True %}
+vlans {
+    default {
+        vlan-id 1;
+    }
+{% if USERINPUT['datavlans'] is defined %}{% for VNI in USERINPUT['datavlans'] %}
+    VLAN{{ VNI['id'] }} {
+        description "{{ VNI['description'] }}";
+        vlan-id {{ VNI['id'] }};
+{% if VNI['l3-enabled'] == True %}
+        l3-interface irb.{{ VNI['id'] }};
+{% endif %}
+        vxlan {
+            vni {{ VNI['vni'] }};
+        }
+    }
+{% endfor %}{% endif %}
+{% for VNI in GLOBAL['datavlans'] %}
+    VLAN{{ VNI['id'] }} {
+        description "{{ VNI['description'] }}";
+        vlan-id {{ VNI['id'] }};
+{% if VNI['l3-enabled'] == True %}
+        l3-interface irb.{{ VNI['id'] }};
+{% endif %}
+{% if VNI['dhcp-snoop'] == True %}
+        forwarding-options {
+            dhcp-security {
+                arp-inspection;
+                ip-source-guard;
+                mine-dhcp-client-options;
+                mine-dhcpv6-client-options;
+            }
+        }
+{% endif %}
+        vxlan {
+            vni {{ VNI['vni'] }};
+        }
+    }
+{% endfor %}
+}
+{% else %}
+{# if we use ipv6 underlay and mac-vrf, set default vlan to 1 in mac-vrf, but also define default in inet.0 with vlan-id 4094 #}
+vlans {
+    default {
+        vlan-id 4094;
+    }
+}
+{% endif %}

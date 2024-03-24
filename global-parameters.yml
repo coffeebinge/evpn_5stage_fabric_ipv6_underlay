@@ -58,8 +58,11 @@ IPv6-lo0-filter: False
 # if you want to enable the GBP Profile, set to True
 gbp-enabled: True
 
-# if you want to make the Underlay IPv6 Only, set to True
+# if you want to make the Underlay IPv6 Only, meaning, removing most references, set to True
 disable-ipv4-underlay: False
+
+# use ipv4 underlay and disable ipv6 (just functionally, v6 interfaces will still be configured)
+ipv4-underlay: False
 
 # option to disable IPv6 LINK-LOCAL on all interfaces, currently we have static fe80 with host bits matching the primary address. 
 disable-ipv6-ll: False
