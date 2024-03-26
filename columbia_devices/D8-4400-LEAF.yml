@@ -61,4 +61,6 @@ ae-ints:
 #  - {id: 114, vni: 100114, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.11, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:11::", ip6-bitmask: 64, ip6-ll: "fe80:44:11::",  description: "campus"}
 
 datavlans:
+ # - {id: 98, vni: 100098, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 98.98.98, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:98:98::", ip6-bitmask: 64, ip6-ll: False, description: test}
+ # - {id: 99, vni: 100099, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 99.99.99, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:99:99::", ip6-bitmask: 64, ip6-ll: False, description: test}
   - {id: 101, vni: 100101, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.101, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:101::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:101:", description: "campus"}

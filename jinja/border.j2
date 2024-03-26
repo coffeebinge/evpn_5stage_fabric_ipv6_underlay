@@ -253,9 +253,9 @@ interfaces {
 {% if not IRB['ip6-prefix'] == False %}
             family inet6 {
                 address {{ IRB['ip6-prefix'] }}{{ IRB['irb-hostbit'] }}/{{ IRB['ip6-bitmask'] }};
-{% if not GLOBAL['disable-ipv6-ll'] == True %}
+{% if not GLOBAL['disable-ipv6-ll'] == True %}{% if not IRB['ip6-ll'] == False %}
                 address {{ IRB['ip6-ll'] }}{{ IRB['irb-hostbit'] }}/64;
-{% endif %}
+{% endif %}{% endif %}
             }
 {% endif %}
             mac {{ IRB['any-mac'] }};
@@ -271,9 +271,9 @@ interfaces {
 {% if not IRB['ip6-prefix'] == False %}
             family inet6 {
                 address {{ IRB['ip6-prefix'] }}{{ IRB['irb-hostbit'] }}/{{ IRB['ip6-bitmask'] }};
-{% if not GLOBAL['disable-ipv6-ll'] == True %}
+{% if not GLOBAL['disable-ipv6-ll'] == True %}{% if not IRB['ip6-ll'] == False %}
                 address {{ IRB['ip6-ll'] }}{{ IRB['irb-hostbit'] }}/64;
-{% endif %}
+{% endif %}{% endif %}
             }
 {% endif %}
             mac {{ IRB['any-mac'] }};
@@ -537,7 +537,7 @@ policy-options {
     policy-statement EXPORT-T5 {
         term ipv4 {
             from {
-                protocol evpn;
+                protocol direct;
                 route-filter 0.0.0.0/0 prefix-length-range /32-/32;
             }
             then accept;
@@ -546,14 +546,10 @@ policy-options {
             from protocol direct;
             then accept;
         }
-        term static {
-            from protocol static;
-            then accept;
-        }
         term ipv6 {
             from {
                 family inet6;
-                protocol evpn;
+                protocol direct;
                 route-filter 0::0/0 prefix-length-range /128-/128;
             }
             then accept;
@@ -629,6 +625,9 @@ routing-instances {
     {{ RI['name'] }} {
         instance-type vrf;
         routing-options {
+            rib {{ RI['name'] }}.inet6.0 {
+                multipath;
+            }
             multipath;
             auto-export;
         }
