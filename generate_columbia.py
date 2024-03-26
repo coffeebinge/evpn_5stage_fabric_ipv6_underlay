@@ -43,7 +43,7 @@ def generate_configs():
     with open('./columbia_devices/border.list') as borderinv:
         borders = borderinv.readlines()
 
-    with open('global-parameters.yml') as global_yml:
+    with open('global-parameters-columbia.yml') as global_yml:
         global_vars = yaml.safe_load(global_yml)
     with open('credentials.yml') as cred_yml:
         cred_vars = yaml.safe_load(cred_yml)
