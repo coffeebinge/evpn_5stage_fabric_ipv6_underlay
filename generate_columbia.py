@@ -32,7 +32,7 @@ def generate_configs():
     leaf_t = jenv.get_template("access_leaf.j2")
     spine_t = jenv.get_template("spine.j2")
     core_t = jenv.get_template("core.j2")
-    border_t = jenv.get_template("border.j2")
+    border_t = jenv.get_template("border_columbia.j2")
 
     with open('./columbia_devices/leaf.list') as leafinv:
         leaves = leafinv.readlines()

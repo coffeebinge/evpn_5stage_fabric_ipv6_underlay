@@ -261,7 +261,6 @@ interfaces {
             mac {{ IRB['any-mac'] }};
         }
 {% endif %}{% endfor %}{% endif %}
-{# 
 {%if GLOBAL['datavlans'] is defined %}
 {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3-enabled'] == True %}
         unit {{ IRB['id'] }} {
@@ -280,7 +279,6 @@ interfaces {
             mac {{ IRB['any-mac'] }};
         }
 {% endif %}{% endfor %}{% endif %}
-  #}
     }
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
@@ -650,11 +648,9 @@ routing-instances {
 {% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};
 {% endif %}{% endfor %}{% endif %}
-{# 
 {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};
 {% endif %}{% endfor %}
- #}
         route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
         vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
         vrf-table-label;

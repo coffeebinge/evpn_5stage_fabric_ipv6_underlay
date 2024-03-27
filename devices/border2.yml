@@ -41,13 +41,11 @@ uplinks:
   - {id: 0, vlan-id: 1, addr-v4: 10.44.250.39, bitmask: 31, addr-v6: "2001:db8:250::39", v6-bitmask: 127, vrf: False}
 
 ## local interfaces (if ethernet-switching phy - set addr-v4/etc to False, set int-mode to access/trunk))
-#local-ints:
-#  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN101 ]"}
-#  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101, VLAN106 ]"}
+local-ints:
+  - {int: et-0/0/50, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "fw1_peering", int-mode: trunk, vlanlist: "[ VLAN98, VLAN99 ]"}
+  - {int: et-0/0/51, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "fw2_peering", int-mode: trunk, vlanlist: "[ VLAN98, VLAN99 ]"}
 
 ae-members:
-  - {int: "et-0/0/50", ae-id: 1, desc: "LOCAL AE1 to FW1 ae1"}
-  - {int: "et-0/0/51", ae-id: 1, desc: "LOCAL AE1 to FW2 ae1"}
   - {int: "et-0/0/52", ae-id: 2, desc: "ESI AE2 to FW1 ae2"}
   - {int: "et-0/0/53", ae-id: 3, desc: "ESI AE3 to FW2 ae2"}
   - {int: "et-0/0/54", ae-id: 4, desc: "ESI AE4 to FW1 ae3"}
@@ -55,18 +53,6 @@ ae-members:
 ae-ints:
 # need to handle sub ints  - {int: 0, mtu: False, addr-v4: 172.16.20.0, bitmask: 31, addr-v6: 2001:db8:20::0, v6-bitmask: /127, esi: False, macvrf: False, l3vrf: campus, desc: "LOCAL AE0 to FW1 ae0", int-mode: False, vlanlist: "[ ]"}
 # need to rewrite this garbase tooo late
-  - int: 1
-    mtu: False
-    l3-enabled: True
-    vlan-tagging: True
-    esi: False
-    macvrf: False
-    desc: "LOCAL AE1 to FW1 & FW2 ae1"
-    int-mode: False
-    vlanlist: "[ ]"
-    unit:
-    - {id: 98, vlan-id: 98, addr-v4: 172.16.20.2, bitmask: 31, addr-v6: "2001:db8:20::2", v6-bitmask: 127, vrf: inet.0}
-    - {id: 99, vlan-id: 99, addr-v4: 99.99.99.2, bitmask: 31, addr-v6: "2001:db8:99::2", v6-bitmask: 127, vrf: campus}
   - {int: 2, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE2 to FW1 ae2", int-mode: trunk, vlanlist: "[ VLAN165 VLAN166 VLAN167 VLAN168 VLAN169 VLAN170 VLAN171 VLAN172 VLAN173 VLAN174 VLAN175 VLAN176 VLAN177 VLAN178 VLAN179 VLAN180 VLAN181 VLAN182 VLAN183 VLAN184 VLAN185 VLAN186 VLAN187 VLAN188 VLAN189 VLAN190 VLAN191 VLAN192 VLAN193 VLAN194 VLAN195 VLAN196 VLAN197 VLAN198 VLAN199 VLAN200 VLAN201 VLAN202 VLAN203 VLAN204 VLAN205 VLAN206 VLAN207 VLAN208 VLAN209 VLAN210 VLAN211 VLAN212 VLAN213 VLAN214 VLAN215 VLAN216 VLAN217 VLAN218 VLAN219 VLAN220 VLAN221 VLAN222 VLAN223 VLAN224 VLAN225 VLAN226 VLAN227 VLAN228 ]"}
   - {int: 3, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE3 to FW2 ae2", int-mode: trunk, vlanlist: "[ VLAN165 VLAN166 VLAN167 VLAN168 VLAN169 VLAN170 VLAN171 VLAN172 VLAN173 VLAN174 VLAN175 VLAN176 VLAN177 VLAN178 VLAN179 VLAN180 VLAN181 VLAN182 VLAN183 VLAN184 VLAN185 VLAN186 VLAN187 VLAN188 VLAN189 VLAN190 VLAN191 VLAN192 VLAN193 VLAN194 VLAN195 VLAN196 VLAN197 VLAN198 VLAN199 VLAN200 VLAN201 VLAN202 VLAN203 VLAN204 VLAN205 VLAN206 VLAN207 VLAN208 VLAN209 VLAN210 VLAN211 VLAN212 VLAN213 VLAN214 VLAN215 VLAN216 VLAN217 VLAN218 VLAN219 VLAN220 VLAN221 VLAN222 VLAN223 VLAN224 VLAN225 VLAN226 VLAN227 VLAN228 ]"}
   - {int: 4, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE4 to FW1 ae3", int-mode: trunk, vlanlist: "[ VLAN3801 VLAN3802 ]"}
@@ -79,6 +65,8 @@ ae-ints:
 #  - {id: 114, vni: 100114, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.11, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:11::", ip6-bitmask: 64, ip6-ll: "fe80:44:11::",  description: "campus"}
 
 datavlans:
+  - {id: 98, vni: 100098, l3-enabled: True, l3vrf: False, any-mac: "00:00:5e:e4:31:57", ip-prefix: 98.98.98, irb-hostbit: 1, bitmask: 31, ip6-prefix: "2001:db8:98:98::", ip6-bitmask: 127, ip6-ll: False, description: underlay_fw_peering}
+  - {id: 99, vni: 100099, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 99.99.99, irb-hostbit: 1, bitmask: 31, ip6-prefix: "2001:db8:99:99::", ip6-bitmask: 127, ip6-ll: False, description: l3vrf_fw_peering}
   - {id: 3801, vni: 103801, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: WAN-RTR1}
   - {id: 3802, vni: 103802, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: WAN-RTR2}
  
