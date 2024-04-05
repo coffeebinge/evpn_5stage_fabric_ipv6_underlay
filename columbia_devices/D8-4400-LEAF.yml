@@ -44,6 +44,7 @@ uplinks:
 local-ints:
   - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101 VLAN165 ]"}
   - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101 VLAN106 ]"}
+  - {int: mge-0/0/23, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "VMWARE vswitch2", int-mode: trunk, vlanlist: "[ VLAN101 VLAN106 VLAN165 ]"}
 
 ae-members:
   - {int: "mge-0/0/2", ae-id: 2, desc: "ae2 test local AE"}

@@ -261,6 +261,7 @@ interfaces {
             mac {{ IRB['any-mac'] }};
         }
 {% endif %}{% endfor %}{% endif %}
+{# 
 {%if GLOBAL['datavlans'] is defined %}
 {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3-enabled'] == True %}
         unit {{ IRB['id'] }} {
@@ -278,7 +279,7 @@ interfaces {
 {% endif %}
             mac {{ IRB['any-mac'] }};
         }
-{% endif %}{% endfor %}{% endif %}
+{% endif %}{% endfor %}{% endif %}  #}
     }
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
@@ -632,6 +633,57 @@ routing-instances {
             auto-export;
         }
         protocols {
+{#  placeholder, add to template
+            bgp {
+                group campus {
+                    type external;
+                    hold-time 90;
+                    log-updown;
+		            family inet {
+                        unicast;
+                    }
+                    import campus-import;
+                    authentication-key "$9$SSqlvLdb2GDkxNDk.P3nylKMxNVwYoZU"; ## SECRET-DATA
+                    export campus-export;
+                    local-as 500;
+                    multipath {
+                        multiple-as;
+                    }
+                    bfd-liveness-detection {
+                        minimum-interval 1000;
+                        multiplier 3;
+                        session-mode automatic;
+                    }
+                    neighbor 97.97.97.0 {
+                        hold-time 90;
+                        peer-as 600;
+                    }
+                }
+                group campus-v6 {
+                    type external;
+                    hold-time 90;
+                    log-updown;
+		            family inet6 {
+                        unicast;
+                    }
+                    import campus-import;
+                    authentication-key "$9$SSqlvLdb2GDkxNDk.P3nylKMxNVwYoZU"; ## SECRET-DATA
+                    export campus-export;
+                    local-as 500;
+                    multipath {
+                        multiple-as;
+                    }
+                    bfd-liveness-detection {
+                        minimum-interval 1000;
+                        multiplier 3;
+                        session-mode automatic;
+                    }
+                    neighbor 2001:db8:97:97:: {
+                        hold-time 90;
+                        peer-as 600;
+                    }
+                }
+            }    #}
             evpn {
                 ip-prefix-routes {
                     advertise direct-nexthop;
@@ -648,9 +700,10 @@ routing-instances {
 {% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};
 {% endif %}{% endfor %}{% endif %}
+{# 
 {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};
-{% endif %}{% endfor %}
+{% endif %}{% endfor %}    #}
         route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
         vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
         vrf-table-label;
