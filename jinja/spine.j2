@@ -12,6 +12,9 @@ system {
     host-name {{ USERINPUT['hostname'] }};
     auto-snapshot;
     time-zone {{ GLOBAL['timezone'] }};
+{% if GLOBAL['enable-mgmt-junos'] == True %}
+    management-instance
+{% endif %}
     root-authentication {
         encrypted-password "{{ CREDS['root'] }}";
     }
@@ -98,12 +101,12 @@ system {
     }
     name-server {
 {% for d in GLOBAL['dns']%}
-        {{ d }};
+        {{ d }}{% if GLOBAL['enable-mgmt-junos'] == True %} routing-instance mgmt_junos{% endif %};
 {% endfor %}
     }
     ntp {
 {% for NTP in GLOBAL['ntp'] %}
-        server {{ NTP }};
+        server {{ NTP }}{% if GLOBAL['enable-mgmt-junos'] == True %} routing-instance mgmt_junos{% endif %};
 {% endfor %}
     }
 }
@@ -182,11 +185,13 @@ forwarding-options {
     }
 }
 routing-options {
+{% if GLOBAL['enable-mgmt-junos'] == False%}
     static {
 {% for SR in GLOBAL['staticroutes'] %}
         route {{ SR }} next-hop {{ USERINPUT['defgw'] }};
 {% endfor %}
     }
+{% endif %}
     router-id{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %};
     autonomous-system {{ USERINPUT['local-as'] }};
     forwarding-table {
@@ -353,3 +358,15 @@ policy-options {
         }
     }
 }
+{% if GLOBAL['enable-mgmt-junos'] == True %}
+routing-instances {
+    mgmt_junos {
+        routing-options {               
+            static {
+                route 0.0.0.0/0 next-hop {{ USERINPUT['defgw'] }};
+            }
+        }
+        description MGT;
+    }
+}
+{% endif %}
