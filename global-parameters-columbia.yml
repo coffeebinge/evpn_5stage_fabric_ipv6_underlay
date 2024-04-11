@@ -67,6 +67,9 @@ ipv4-underlay: False
 # option to disable IPv6 LINK-LOCAL on all interfaces, currently we have static fe80 with host bits matching the primary address. 
 disable-ipv6-ll: False
 
+# enabled mgmt_junos instance for outbound-ssh, ntp, dns (but leave the rest using inband dataplane)
+enable-mgmt-junos: True
+
 ###############################################################################################
 ## BGP section  (find bgp neighbors definitions for underlay/overlay in each device yaml file)
 ## note: connect-retry-interval is for all bgp groups, you can override manually per neighbor if you wish. Set to False to disable

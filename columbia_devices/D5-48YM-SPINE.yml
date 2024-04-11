@@ -16,7 +16,7 @@ local-as: 65005
 
 bgp-neigh:
   - {ubgp-ip: 10.44.250.0, ubgp-ip6: "2001:db8:250::0", obgp-ip: 10.44.255.1, obgp-ip6: "2001:db8:255::1", peer-as: 65001, bfd-int: 1000, bfd-mult: 3, desc: pod1-leaf1}
-#  - {ubgp-ip: 10.44.250.4, ubgp-ip6: "2001:db8:250::4", obgp-ip: 10.44.255.2, obgp-ip6: "2001:db8:255::2", peer-as: 65002, bfd-int: 1000, bfd-mult: 3, desc: pod1-leaf2}
+  - {ubgp-ip: 10.44.250.4, ubgp-ip6: "2001:db8:250::4", obgp-ip: 10.44.255.2, obgp-ip6: "2001:db8:255::2", peer-as: 65002, bfd-int: 1000, bfd-mult: 3, desc: pod1-leaf2}
   - {ubgp-ip: 10.44.250.17, ubgp-ip6: "2001:db8:250::17", obgp-ip: 10.44.255.9, obgp-ip6: "2001:db8:255::9", peer-as: 65009, bfd-int: 1000, bfd-mult: 3, desc: core1}
 #  - {ubgp-ip: 10.44.250.19, ubgp-ip6: "2001:db8:250::19", obgp-ip: 10.44.255.10, obgp-ip6: "2001:db8:255::10", peer-as: 65010, bfd-int: 1000, bfd-mult: 3, desc: core2}
 
@@ -28,8 +28,8 @@ uplinks:
   mtu: 9192
   unit:
   - {id: 0, vlan-id: 1, addr-v4: 10.44.250.1, bitmask: 31, addr-v6: "2001:db8:250::1", v6-bitmask: 127, vrf: False}
-- int: xe-0/0/1
-  description: "DO NOT HAVE - pod1-leaf2 xe-0/2/0"
+- int: xe-0/0/2
+  description: "pod1-leaf2 xe-0/2/0"
   vlan-tagging: False
   mtu: 9192
   unit:
