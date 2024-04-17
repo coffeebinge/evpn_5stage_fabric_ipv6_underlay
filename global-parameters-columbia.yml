@@ -91,7 +91,7 @@ connect-retry-interval: 2
 
 
 datavlans:
-  - {id: 106, vni: 100106, dhcp-snoop: True, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.106, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:106::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:106:",  description: "campus"}
+  - {id: 106, vni: 100106, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.106, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:106::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:106:",  description: "campus"}
   - {id: 107, vni: 100107, dhcp-snoop: True, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.107, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:107::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:107:",  description: "campus"}
   - {id: 108, vni: 100108, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.108, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:108::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:108:",  description: "campus"}
   - {id: 109, vni: 100109, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.109, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:109::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:109:",  description: "campus"}
@@ -151,7 +151,7 @@ datavlans:
   - {id: 163, vni: 100163, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.163, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:163::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:163:",  description: "campus"}
   - {id: 164, vni: 100164, dhcp-snoop: False, l3-enabled: True, l3vrf: campus, any-mac: "00:00:5e:e4:31:57", ip-prefix: 10.44.164, irb-hostbit: 1, bitmask: 24, ip6-prefix: "2001:db8:44:164::", ip6-bitmask: 64, ip6-ll: "fe80::10:44:164:",  description: "campus"}
   - {id: 165, vni: 100165, dhcp-snoop: False, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: L2-only-vlan165}
-  - {id: 166, vni: 100166, dhcp-snoop: False, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: L2-only-vlan166}
+  - {id: 166, vni: 100166, dhcp-snoop: True, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: L2-only-vlan166}
   - {id: 167, vni: 100167, dhcp-snoop: False, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: L2-only-vlan167}
   - {id: 168, vni: 100168, dhcp-snoop: False, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: L2-only-vlan168}
   - {id: 169, vni: 100169, dhcp-snoop: False, l3-enabled: False, l3vrf: False, any-mac: False, ip-prefix: False, irb-hostbit: False, bitmask: False, ip6-prefix: False, ip6-bitmask: False, ip6-ll: False, description: L2-only-vlan169}
