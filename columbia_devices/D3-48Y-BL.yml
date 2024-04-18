@@ -49,7 +49,7 @@ uplinks:
 local-ints:
 #  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN101 ]"}
 #  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101, VLAN106 ]"}
-  - {int: xe-0/0/6, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "VMWARE vswitchDUAL", int-mode: trunk, vlanlist: "[ VLAN105 VLAN3801 VLAN3802 ]"}
+  - {int: ge-0/0/6, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "VMWARE vswitchDUAL", int-mode: trunk, vlanlist: "[ VLAN105 VLAN3801 VLAN3802 ]"}
 
 ae-members:
   - {int: "xe-0/0/0", ae-id: 1, desc: "LOCAL AE1 to FW1 ae1 ex4400 xe-0/2/1 - vrf-fw1"}

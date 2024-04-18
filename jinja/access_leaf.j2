@@ -126,7 +126,7 @@ chassis {
 {% for ITEM in USERINPUT['chassis']%}
     fpc {{ ITEM['fpc'] }} {
         pic {{ ITEM['pic'] }} {
-            port {{ ITEM['port'] }}; {
+            port {{ ITEM['port'] }} {
                 speed {{ ITEM['speed'] }};
             }
         }
