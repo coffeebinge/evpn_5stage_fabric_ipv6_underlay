@@ -8,6 +8,11 @@ defgw: 10.192.16.1
 
 ## add chassis device count for AE
 ae-count: 48
+
+chassis:
+ - {fpc: 0, pic: 2, port: 0, speed: 10g}
+
+
 ## evpn info
 pod: 1
 leaf-pair: 1   ## please use decimal values 1-255
@@ -42,16 +47,16 @@ uplinks:
 
 ## local interfaces (if ethernet-switching phy - set addr-v4/etc to False, set int-mode to access/trunk))
 local-ints:
-  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN102 ]"}
-  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN102 VLAN106 ]"}
+  - {int: mge-0/0/22, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "VMWARE vswitch9", int-mode: trunk, vlanlist: "[ VLAN102 VLAN107 VLAN166 ]"}
+  - {int: mge-0/0/23, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "VMWARE vswitch3", int-mode: trunk, vlanlist: "[ VLAN102 VLAN106 VLAN165 ]"}
 
-ae-members:
-  - {int: "mge-0/0/2", ae-id: 2, desc: "ae2 test local AE"}
-  - {int: "mge-0/0/3", ae-id: 33, desc: "ae3 test with ESI"}
-
-ae-ints:
-  - {int: 2, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN106 ]"}
-  - {int: 3, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: True, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN102 VLAN106 ]"}
+#ae-members:
+#  - {int: "mge-0/0/2", ae-id: 2, desc: "ae2 test local AE"}
+#  - {int: "mge-0/0/3", ae-id: 33, desc: "ae3 test with ESI"}
+#
+#ae-ints:
+#  - {int: 2, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN106 ]"}
+#  - {int: 3, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, esi: True, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN102 VLAN106 ]"}
 
 
 ## locally significant vlans

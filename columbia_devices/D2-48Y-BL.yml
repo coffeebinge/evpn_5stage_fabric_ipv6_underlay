@@ -8,6 +8,11 @@ defgw: 10.192.16.1
 
 ## add chassis device count for AE
 ae-count: 48
+
+chassis:
+ - {fpc: 0, pic: 0, port: 4, speed: 1g}
+ - {fpc: 0, pic: 0, port: 8, speed: 1g}
+
 ## evpn info
 
 leaf-pair: 200   ## please use decimal values 1-255
@@ -44,14 +49,14 @@ uplinks:
 local-ints:
 #  - {int: mge-0/0/0, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: access, vlanlist: "[ VLAN101 ]"}
 #  - {int: mge-0/0/1, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN101, VLAN106 ]"}
-  - {int: xe-0/0/6, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "host facing", int-mode: trunk, vlanlist: "[ VLAN105 VLAN3801 VLAN3802 ]"}
+  - {int: xe-0/0/6, mtu: False, addr-v4: False, bitmask: False, addr-v6: False, v6-bitmask: False, macvrf: evpn_vs, l3vrf: False, desc: "VMWARE vswitchDUAL", int-mode: trunk, vlanlist: "[ VLAN105 VLAN3801 VLAN3802 ]"}
 
 ae-members:
-  - {int: "xe-0/0/0", ae-id: 0, desc: "LOCAL AE0 to FW1 ae0 ex4400 mge-0/0/0 - vrf-fw1"}
-  - {int: "xe-0/0/1", ae-id: 0, desc: "LOCAL AE0 to FW2 ae0 ex4400 mge-0/0/1 - vrf-fw2 -set-disable-"}
+  - {int: "xe-0/0/0", ae-id: 0, desc: "LOCAL AE0 to FW1 ae0 ex4400 xe-0/2/0 - vrf-fw1"}
+#  - {int: "ge-0/0/8", ae-id: 0, desc: "LOCAL AE0 to FW2 ae0 ex4400 mge-0/0/2 - vrf-fw2 -set-disable-"}
   - {int: "xe-0/0/2", ae-id: 2, desc: "ESI AE2 to FW1 ae2 ex4400 mge-0/0/2 - vrf-fw1"}
 #  - {int: "xe-0/0/3", ae-id: 3, desc: "ESI AE3 to FW2 ae2 ex4400 mge-0/0/3 - vrf-fw2 -set-disable-"}
-#  - {int: "xe-0/0/4", ae-id: 4, desc: "ESI AE4 to FW1 ae3 ex4400 mge-0/0/4 - vrf-fw1"}
+  - {int: "ge-0/0/10", ae-id: 4, desc: "ESI AE4 to FW1 ae3 ex4400 mge-0/0/0 - vrf-fw1"}
 #  - {int: "xe-0/0/5", ae-id: 5, desc: "ESI AE5 to FW2 ae3 ex4400 mge-0/0/5 - vrf-fw2 -set-disable-"}
 ae-ints:
 # need to handle sub ints  - {int: 0, mtu: False, addr-v4: 172.16.20.0, bitmask: 31, addr-v6: 2001:db8:20::0, v6-bitmask: /127, esi: False, macvrf: False, l3vrf: campus, desc: "LOCAL AE0 to FW1 ae0", int-mode: False, vlanlist: "[ ]"}
@@ -70,7 +75,7 @@ ae-ints:
     - {id: 97, vlan-id: 97, addr-v4: 97.97.97.1, bitmask: 31, addr-v6: "2001:db8:97:97::1", v6-bitmask: 127, vrf: campus}
   - {int: 2, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE2 to FW1 ae2", int-mode: trunk, vlanlist: "[ VLAN165 VLAN166 VLAN167 VLAN168 VLAN169 VLAN170 VLAN171 VLAN172 VLAN173 VLAN174 VLAN175 VLAN176 VLAN177 VLAN178 VLAN179 VLAN180 VLAN181 VLAN182 VLAN183 VLAN184 VLAN185 VLAN186 VLAN187 VLAN188 VLAN189 VLAN190 VLAN191 VLAN192 VLAN193 VLAN194 VLAN195 VLAN196 VLAN197 VLAN198 VLAN199 VLAN200 VLAN201 VLAN202 VLAN203 VLAN204 VLAN205 VLAN206 VLAN207 VLAN208 VLAN209 VLAN210 VLAN211 VLAN212 VLAN213 VLAN214 VLAN215 VLAN216 VLAN217 VLAN218 VLAN219 VLAN220 VLAN221 VLAN222 VLAN223 VLAN224 VLAN225 VLAN226 VLAN227 VLAN228 ]"}
 #  - {int: 3, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE3 to FW2 ae2", int-mode: trunk, vlanlist: "[ VLAN165 VLAN166 VLAN167 VLAN168 VLAN169 VLAN170 VLAN171 VLAN172 VLAN173 VLAN174 VLAN175 VLAN176 VLAN177 VLAN178 VLAN179 VLAN180 VLAN181 VLAN182 VLAN183 VLAN184 VLAN185 VLAN186 VLAN187 VLAN188 VLAN189 VLAN190 VLAN191 VLAN192 VLAN193 VLAN194 VLAN195 VLAN196 VLAN197 VLAN198 VLAN199 VLAN200 VLAN201 VLAN202 VLAN203 VLAN204 VLAN205 VLAN206 VLAN207 VLAN208 VLAN209 VLAN210 VLAN211 VLAN212 VLAN213 VLAN214 VLAN215 VLAN216 VLAN217 VLAN218 VLAN219 VLAN220 VLAN221 VLAN222 VLAN223 VLAN224 VLAN225 VLAN226 VLAN227 VLAN228 ]"}
-#  - {int: 4, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE4 to FW1 ae3", int-mode: trunk, vlanlist: "[ VLAN3801 VLAN3802 ]"}
+  - {int: 4, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE4 to FW1 ae3", int-mode: trunk, vlanlist: "[ VLAN3801 VLAN3802 ]"}
 #  - {int: 5, mtu: False, esi: True, l3-enabled: False, macvrf: evpn_vs, desc: "ESI AE5 to FW2 ae3", int-mode: trunk, vlanlist: "[ VLAN3801 VLAN3802 ]"}
 
 ## locally significant vlans

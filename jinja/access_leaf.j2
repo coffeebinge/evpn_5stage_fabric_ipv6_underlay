@@ -122,6 +122,17 @@ chassis {
             device-count {{ USERINPUT['ae-count'] }};
         }
     }
+{% if USERINPUT['chassis'] is defined %}
+{% for ITEM in USERINPUT['chassis']%}
+    fpc {{ ITEM['fpc'] }} {
+        pic {{ ITEM['pic'] }} {
+            port {{ ITEM['port'] }}; {
+                speed {{ ITEM['speed'] }};
+            }
+        }
+    }
+{% endfor %}
+{% endif %}
 {% if GLOBAL['gbp-enabled'] %}
     forwarding-options {
         vxlan-gbp-profile;
