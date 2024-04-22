@@ -298,14 +298,6 @@ interfaces {
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
         unit {{ LOOP['id'] }} {
-{% if GLOBAL['disable-ipv4-underlay'] == True and LOOP['id'] == 0 and GLOBAL['IPv4-lo0-filter'] == False %}
-{% elif GLOBAL['disable-ipv4-underlay'] == True and LOOP['id'] == 0 and GLOBAL['IPv4-lo0-filter'] %}
-            family inet {
-                filter {
-                    input {{ LOOP['filter-v4'] }};
-                }
-            } 
-{% else %}
             family inet {
 {% if not LOOP['filter-v4'] == False and not GLOBAL['IPv4-lo0-filter'] == False %}
                 filter {
@@ -314,7 +306,6 @@ interfaces {
 {% endif %}
                 address {{ LOOP['addr-v4'] }}/32;
             }
-{% endif %}
 {% if not LOOP['addr-v6'] == False %}
             family inet6 {
 {% if not LOOP['filter-v6'] == False and not GLOBAL['IPv6-lo0-filter'] == False %}
@@ -417,7 +408,12 @@ protocols {
             mtu-discovery;
             log-updown;
             family inet {
-                unicast;
+                unicast {
+                    extended-nexthop;
+                }
+            }
+            family inet6 {
+                unicast ;
             }
             authentication-key "{{ CREDS['bgpkey'] }}"
             export UNDERLAY-BGP-OUT;
@@ -447,8 +443,13 @@ protocols {
 {% endif %}
             mtu-discovery;
             log-updown;
+            family inet {
+                unicast {
+                    extended-nexthop;
+                }
+            }
             family inet6 {
-                unicast;
+                unicast ;
             }
             authentication-key "{{ CREDS['bgpkey'] }}"
             export UNDERLAY-BGP-OUT-V6;
@@ -543,6 +544,15 @@ policy-options {
     }
 {% endif %}
     policy-statement UNDERLAY-BGP-OUT-V6 {
+{% if GLOBAL['disable-ipv4-underlay'] == True %}
+        term ADVERTISE-V4 {
+            from {
+                protocol direct;
+                route-filter{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}/32 exact;
+            }
+            then accept;
+        }
+{% endif %}
         term ADVERTISE {
             from {
                 protocol direct;
