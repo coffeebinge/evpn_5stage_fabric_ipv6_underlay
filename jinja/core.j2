@@ -169,7 +169,7 @@ interfaces {
 {% endfor %}
     }
 }
-{%- include 'inc_snmp.j2' +%}
+{% include 'inc_snmp.j2' +%}
 forwarding-options {
     storm-control-profiles default {
         all;
