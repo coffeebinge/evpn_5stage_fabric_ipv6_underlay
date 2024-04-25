@@ -564,23 +564,33 @@ policy-options {
     policy-statement EXPORT-T5 {
         term ipv4 {
             from {
-                protocol direct;
+                protocol evpn;
                 route-filter 0.0.0.0/0 prefix-length-range /32-/32;
             }
-            then accept;
-        }
-        term direct {
-            from protocol direct;
             then accept;
         }
         term ipv6 {
             from {
                 family inet6;
-                protocol direct;
+                protocol evpn;
                 route-filter 0::0/0 prefix-length-range /128-/128;
             }
             then accept;
-        }                               
+        }
+        term default {
+            from {
+                protocol bgp;
+                route-filter 0.0.0.0/0 exact;
+            }
+            then accept;
+        }
+        term default-v6 {
+            from {
+                protocol bgp;
+                route-filter 0::0/0 exact;
+            }
+            then accept;
+        }
     }
 }
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
@@ -715,7 +725,7 @@ routing-instances {
                     advertise direct-nexthop;
                     encapsulation vxlan;
                     vni {{ RI['t5vni'] }};
-                    inactive: export EXPORT-T5;
+                    export EXPORT-T5;
                 }
             }
         }
