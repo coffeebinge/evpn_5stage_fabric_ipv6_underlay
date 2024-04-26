@@ -11,7 +11,7 @@ oism:
   role: borderleaf
   sbd-addr-v4: 10.44.91.12/24
   sbd-addr-v6: "2001:db8:91::12/64"
-  border-l3-int: ae0.97
+  border-l3-int: ae1.99
   pim-local-rp-v4: 2.2.2.2
   pim-local-rp-v6: "2001:db8:2:2::2:2"
   pim-anycast-peer-v4: 10.44.254.11
