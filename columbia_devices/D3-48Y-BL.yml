@@ -5,6 +5,17 @@ netmask: 255.255.254.0
 bitmask: 23
 defgw: 10.192.16.1
 
+## notes: set the sbd address with a bitmask ie. 10.44.91.11/24 or "2001:db8:91::11/64"  (always quote v6 addresses due to the colon)
+## for the border leaves, set the anycast RP peer to the VRF loopback address of the other border leaf. 
+oism:
+  role: borderleaf
+  sbd-addr-v4: 10.44.91.12/24
+  sbd-addr-v6: "2001:db8:91::12/64"
+  border-l3-int: ae0.97
+  pim-local-rp-v4: 2.2.2.2
+  pim-local-rp-v6: "2001:db8:2:2::2:2"
+  pim-anycast-peer-v4: 10.44.254.11
+  pim-anycast-peer-v6: "2001:db8:254::11"
 
 ## add chassis device count for AE
 ae-count: 48

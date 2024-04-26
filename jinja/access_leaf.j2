@@ -269,6 +269,17 @@ interfaces {
             mac {{ IRB['any-mac'] }};
         }
 {% endif %}{% endfor %}{% endif %}
+{% if GLOBAL['oism-enabled'] == True %}
+        unit {{ GLOBAL['oism']['sbd-vlan-id'] }} {
+            description "SBD for Multicast";
+            family inet {
+                address {{ USERINPUT['oism']['sbd-addr-v4'] }};
+            }
+            family inet6 {
+                address {{ USERINPUT['oism']['sbd-addr-v6'] }};
+            }
+        }
+{% endif %}
     }
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
@@ -309,6 +320,13 @@ forwarding-options {
     vxlan-routing {
         overlay-ecmp;
     }
+{% if GLOBAL['oism-enabled'] == True %}
+    multicast-replication {
+        evpn {
+            irb enhanced-oism;
+        }
+    }
+{% endif %}
 }
 routing-options {
 {% if GLOBAL['enable-mgmt-junos'] == False%}
@@ -560,7 +578,11 @@ policy-options {
                 route-filter 0::0/0 prefix-length-range /128-/128;
             }
             then accept;
-        }                               
+        }
+        term direct {
+            from protocol direct;
+            then accept;
+        }
     }
 }
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
@@ -569,10 +591,23 @@ routing-instances {
     evpn_vs {
         instance-type mac-vrf;
         protocols {
+{% if GLOBAL['oism-enabled'] == True %}
+            igmp-snooping {
+                vlan all {
+                    proxy;
+                }
+            }
+            mld-snooping {
+                vlan all;
+            }
+{% endif %}
             evpn {
                 encapsulation vxlan;
-{# changing this from do-not-advertise to no-gateway-community for oism/sbd #}
+{% if GLOBAL['oism-enabled'] == True %}
+                default-gateway no-gateway-community;
+{% else %}
                 default-gateway do-not-advertise;
+{% endif %}
                 extended-vni-list all;
             }
 {# removing RSTP from mac-vrf (not allowed) 
@@ -604,6 +639,16 @@ routing-instances {
             default {
                 vlan-id 1;
             }
+{% if GLOBAL['oism-enabled'] == True %}
+            VLAN{{ GLOBAL['oism']['sbd-vlan-id'] }} {
+                description "SBD for Multicast";
+                vlan-id {{ GLOBAL['oism']['sbd-vlan-id'] }};
+                l3-interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                vxlan {
+                    vni 10{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                }
+            }
+{% endif %}
 {% if USERINPUT['datavlans'] is defined %}{% for VNI in USERINPUT['datavlans'] %}
             VLAN{{ VNI['id'] }} {
                 description "{{ VNI['description'] }}";
@@ -659,6 +704,34 @@ routing-instances {
                     vni {{ RI['t5vni'] }};
                     export EXPORT-T5;
                 }
+{% if GLOBAL['oism-enabled'] == True %}
+                oism {
+                    supplemental-bridge-domain-irb irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                }
+            }
+            ospf {
+                area 0.0.0.0 {
+                    interface all {
+                        passive;
+                    }
+                    interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                }
+            }
+            ospf3 {
+                area 0.0.0.0 {
+                    interface all {
+                        passive;
+                    }
+                    interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                }
+            }
+            pim {
+                passive;
+                interface all;
+                interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }} {
+                    accept-remote-source;
+                }
+{% endif %}
             }
         }
 {# need to add dhcp-relay here #}
@@ -669,6 +742,9 @@ routing-instances {
 {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};
 {% endif %}{% endfor %}
+{% if GLOBAL['oism-enabled'] == True %}
+        interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+{% endif %}
         route-distinguisher{% for LOOP in USERINPUT['loopbacks'] %}{% if LOOP['id'] == 0 %} {{ LOOP['addr-v4'] }}{% endif %}{% endfor %}:{{ RI['id'] }};
         vrf-target target:{{ GLOBAL['overlay-rt']}}:{{ RI['id'] }};
         vrf-table-label;

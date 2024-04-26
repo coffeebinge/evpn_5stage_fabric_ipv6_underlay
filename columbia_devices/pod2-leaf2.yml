@@ -5,6 +5,11 @@ netmask: 255.255.254.0
 bitmask: 23
 defgw: 10.192.16.1
 
+## OISM Multicast config - need unique v4 and v6 addresses for each leaf in the fabric. All devices require it if enabled. 
+oism:
+  role: serverleaf
+  sbd-addr-v4: 10.44.91.4/24
+  sbd-addr-v6: "2001:db8:91::4/64"
 
 ## add chassis device count for AE
 ae-count: 48

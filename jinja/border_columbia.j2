@@ -294,6 +294,17 @@ interfaces {
             mac {{ IRB['any-mac'] }};
         }
 {% endif %}{% endfor %}{% endif %}  #}
+{% if GLOBAL['oism-enabled'] == True %}
+        unit {{ GLOBAL['oism']['sbd-vlan-id'] }} {
+            description "SBD for Multicast";
+            family inet {
+                address {{ USERINPUT['oism']['sbd-addr-v4'] }};
+            }
+            family inet6 {
+                address {{ USERINPUT['oism']['sbd-addr-v6'] }};
+            }
+        }
+{% endif %}
     }
     lo0 {
 {% for LOOP in USERINPUT['loopbacks'] %}
@@ -304,7 +315,14 @@ interfaces {
                     input {{ LOOP['filter-v4'] }};
                 }
 {% endif %}
-                address {{ LOOP['addr-v4'] }}/32;
+                address {{ LOOP['addr-v4'] }}/32 {
+                    primary;
+                }
+{% if GLOBAL['oism-enabled'] == True %}
+{% if LOOP['vrf'] == "campus" %}{# not very clean / extensive for multi-vrf... #}
+                address {{ USERINPUT['oism']['pim-local-rp-v4'] }}/32;
+{% endif %}
+{% endif %}
             }
 {% if not LOOP['addr-v6'] == False %}
             family inet6 {
@@ -313,7 +331,14 @@ interfaces {
                     input {{ LOOP['filter-v6'] }};
                 }
 {% endif %}
-                address {{ LOOP['addr-v6'] }}/128;
+                address {{ LOOP['addr-v6'] }}/128 {
+                    primary;
+                }
+{% if GLOBAL['oism-enabled'] == True %}
+{% if LOOP['vrf'] == "campus" %}{# not very clean / extensive for multi-vrf... #}
+                address {{ USERINPUT['oism']['pim-local-rp-v6'] }}/128;
+{% endif %}
+{% endif %}
             }
 {% endif %}
         }
@@ -334,6 +359,13 @@ forwarding-options {
     vxlan-routing {
         overlay-ecmp;
     }
+{% if GLOBAL['oism-enabled'] == True %}
+    multicast-replication {
+        evpn {
+            irb enhanced-oism;
+        }
+    }
+{% endif %}
 }
 routing-options {
 {% if GLOBAL['enable-mgmt-junos'] == False%}
@@ -591,6 +623,10 @@ policy-options {
             }
             then accept;
         }
+        term direct {
+            from protocol direct;
+            then accept;
+        }
     }
 }
 {# add routing-instances here, evpn mac-vrf and l3vrf for campus irb #}
@@ -599,10 +635,23 @@ routing-instances {
     evpn_vs {
         instance-type mac-vrf;
         protocols {
+{% if GLOBAL['oism-enabled'] == True %}
+            igmp-snooping {
+                vlan all {
+                    proxy;
+                }
+            }
+            mld-snooping {
+                vlan all;
+            }
+{% endif %}
             evpn {
                 encapsulation vxlan;
-{# changing this from do-not-advertise to no-gateway-community for oism/sbd #}
+{% if GLOBAL['oism-enabled'] == True %}
+                default-gateway no-gateway-community;
+{% else %}
                 default-gateway do-not-advertise;
+{% endif %}
                 extended-vni-list all;
             }
 {# removing RSTP from mac-vrf (not allowed) 
@@ -634,6 +683,16 @@ routing-instances {
             default {
                 vlan-id 1;
             }
+{% if GLOBAL['oism-enabled'] == True %}
+            VLAN{{ GLOBAL['oism']['sbd-vlan-id'] }} {
+                description "SBD for Multicast";
+                vlan-id {{ GLOBAL['oism']['sbd-vlan-id'] }};
+                l3-interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                vxlan {
+                    vni 10{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                }
+            }
+{% endif %}
 {% if USERINPUT['datavlans'] is defined %}{% for VNI in USERINPUT['datavlans'] %}
             VLAN{{ VNI['id'] }} {
                 description "{{ VNI['description'] }}";
@@ -669,57 +728,6 @@ routing-instances {
             auto-export;
         }
         protocols {
-{#  placeholder, add to template
-            bgp {
-                group campus {
-                    type external;
-                    hold-time 90;
-                    log-updown;
-		            family inet {
-                        unicast;
-                    }
-                    import campus-import;
-                    authentication-key "$9$SSqlvLdb2GDkxNDk.P3nylKMxNVwYoZU"; ## SECRET-DATA
-                    export campus-export;
-                    local-as 500;
-                    multipath {
-                        multiple-as;
-                    }
-                    bfd-liveness-detection {
-                        minimum-interval 1000;
-                        multiplier 3;
-                        session-mode automatic;
-                    }
-                    neighbor 97.97.97.0 {
-                        hold-time 90;
-                        peer-as 600;
-                    }
-                }
-                group campus-v6 {
-                    type external;
-                    hold-time 90;
-                    log-updown;
-		            family inet6 {
-                        unicast;
-                    }
-                    import campus-import;
-                    authentication-key "$9$SSqlvLdb2GDkxNDk.P3nylKMxNVwYoZU"; ## SECRET-DATA
-                    export campus-export;
-                    local-as 500;
-                    multipath {
-                        multiple-as;
-                    }
-                    bfd-liveness-detection {
-                        minimum-interval 1000;
-                        multiplier 3;
-                        session-mode automatic;
-                    }
-                    neighbor 2001:db8:97:97:: {
-                        hold-time 90;
-                        peer-as 600;
-                    }
-                }
-            }    #}
             evpn {
                 ip-prefix-routes {
                     advertise direct-nexthop;
@@ -727,6 +735,62 @@ routing-instances {
                     vni {{ RI['t5vni'] }};
                     export EXPORT-T5;
                 }
+{% if GLOBAL['oism-enabled'] == True %}
+                oism {
+                    supplemental-bridge-domain-irb irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                    pim-evpn-gateway;
+                }
+            }
+            ospf {
+                area 0.0.0.0 {
+                    interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                    interface all {
+                        passive;
+                    }
+                }
+            }
+            ospf3 {
+                area 0.0.0.0 {
+                    interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+                    interface all {
+                        passive;
+                    }
+                }
+            }
+            pim {
+                rp {
+                    local {
+                        family inet {
+                            address {{ USERINPUT['oism']['pim-local-rp-v4'] }};
+                            anycast-pim {
+                                rp-set {
+                                    address {{ USERINPUT['oism']['pim-anycast-peer-v4'] }};
+                                }
+                                local-address {% for LO in USERINPUT['loopbacks'] %}{% if LO['vrf'] == RI['name'] %}{{ LO['addr-v4'] }}{% endif %}{% endfor %};
+                            }
+                        }
+                        family inet6 {
+                            address {{ USERINPUT['oism']['pim-local-rp-v6'] }};
+                            anycast-pim {
+                                rp-set {
+                                    address {{ USERINPUT['oism']['pim-anycast-peer-v6'] }};
+                                }
+                                local-address {% for LO in USERINPUT['loopbacks'] %}{% if LO['vrf'] == RI['name'] %}{{ LO['addr-v6'] }}{% endif %}{% endfor %};
+                            }
+                        }
+                    }
+                }
+{% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+                interface irb.{{ IRB['id'] }} {
+                    distributed-dr;
+                }
+{% endif %}{% endfor %}{% endif %}
+                interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }} {
+                    accept-remote-source;
+                }
+                interface {{ USERINPUT['oism']['border-l3-int'] }};
+                disable-packet-register;
+{% endif %}
             }
         }
         interface lo0.{% for LO in USERINPUT['loopbacks'] %}{% if LO['vrf'] == RI['name'] %}{{ LO['id'] }}{% endif %}{% endfor %};
@@ -736,6 +800,9 @@ routing-instances {
 {% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};
 {% endif %}{% endfor %}{% endif %}
+{% if GLOBAL['oism-enabled'] == True %}
+        interface irb.{{ GLOBAL['oism']['sbd-vlan-id'] }};
+{% endif %}
 {# 
 {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
         interface irb.{{ IRB['id'] }};

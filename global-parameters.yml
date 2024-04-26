@@ -60,7 +60,9 @@ gbp-enabled: False
 
 # enable OISM
 oism-enabled: True
-
+oism:
+  sbd-vlan-id: 901
+  
 # if you want to make the Underlay IPv6 Only, meaning, removing most references, set to True
 disable-ipv4-underlay: True
 
