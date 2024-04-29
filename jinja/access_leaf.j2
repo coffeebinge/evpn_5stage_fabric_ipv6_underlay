@@ -593,12 +593,28 @@ routing-instances {
         protocols {
 {% if GLOBAL['oism-enabled'] == True %}
             igmp-snooping {
-                vlan all {
+{% if USERINPUT['datavlans'] is defined %}{% for V in USERINPUT['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }} {
                     proxy;
                 }
+{% endif %}{% endfor %}{% endif %}
+                vlan VLAN{{ GLOBAL['oism']['sbd-vlan-id'] }} {
+                    proxy;
+                }
+{% for V in GLOBAL['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }} {
+                    proxy;
+                }
+{% endif %}{% endfor %}
             }
             mld-snooping {
-                vlan all;
+{% if USERINPUT['datavlans'] is defined %}{% for V in USERINPUT['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }};
+{% endif %}{% endfor %}{% endif %}
+                vlan VLAN{{ GLOBAL['oism']['sbd-vlan-id'] }};
+{% for V in GLOBAL['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }};
+{% endif %}{% endfor %}
             }
 {% endif %}
             evpn {

@@ -318,11 +318,10 @@ interfaces {
                 address {{ LOOP['addr-v4'] }}/32 {
                     primary;
                 }
-{% if GLOBAL['oism-enabled'] == True %}
+{% if GLOBAL['oism-enabled'] == True %}{% if USERINPUT['oism']['pim-static-or-local'] == "local" %}
 {% if LOOP['vrf'] == "campus" %}{# not very clean / extensive for multi-vrf... #}
                 address {{ USERINPUT['oism']['pim-local-rp-v4'] }}/32;
-{% endif %}
-{% endif %}
+{% endif %}{% endif %}{% endif %}
             }
 {% if not LOOP['addr-v6'] == False %}
             family inet6 {
@@ -334,11 +333,10 @@ interfaces {
                 address {{ LOOP['addr-v6'] }}/128 {
                     primary;
                 }
-{% if GLOBAL['oism-enabled'] == True %}
+{% if GLOBAL['oism-enabled'] == True %}{% if USERINPUT['oism']['pim-static-or-local'] == "local" %}
 {% if LOOP['vrf'] == "campus" %}{# not very clean / extensive for multi-vrf... #}
                 address {{ USERINPUT['oism']['pim-local-rp-v6'] }}/128;
-{% endif %}
-{% endif %}
+{% endif %}{% endif %}{% endif %}
             }
 {% endif %}
         }
@@ -637,12 +635,28 @@ routing-instances {
         protocols {
 {% if GLOBAL['oism-enabled'] == True %}
             igmp-snooping {
-                vlan all {
+{% if USERINPUT['datavlans'] is defined %}{% for V in USERINPUT['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }} {
                     proxy;
                 }
+{% endif %}{% endfor %}{% endif %}
+                vlan VLAN{{ GLOBAL['oism']['sbd-vlan-id'] }} {
+                    proxy;
+                }
+{# {% for V in GLOBAL['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }} {
+                    proxy;
+                }
+{% endif %}{% endfor %} #}
             }
             mld-snooping {
-                vlan all;
+{% if USERINPUT['datavlans'] is defined %}{% for V in USERINPUT['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }};
+{% endif %}{% endfor %}{% endif %}
+                vlan VLAN{{ GLOBAL['oism']['sbd-vlan-id'] }};
+{# {% for V in GLOBAL['datavlans'] %}{% if V['l3-enabled'] == True %}
+                vlan VLAN{{ V['id'] }};
+{% endif %}{% endfor %} #}
             }
 {% endif %}
             evpn {
@@ -759,6 +773,7 @@ routing-instances {
             }
             pim {
                 rp {
+{% if USERINPUT['oism']['pim-static-or-local'] == "local" %}
                     local {
                         family inet {
                             address {{ USERINPUT['oism']['pim-local-rp-v4'] }};
@@ -779,7 +794,15 @@ routing-instances {
                             }
                         }
                     }
+{% else %}
+                    static {
+                        address {{ USERINPUT['oism']['pim-static-rp-v4'] }};
+{% if not USERINPUT['oism']['pim-static-rp-v6'] == False %}
+                        address {{ USERINPUT['oism']['pim-static-rp-v6'] }};
+{% endif %}
+                    }
                 }
+{% endif %}
 {% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
                 interface irb.{{ IRB['id'] }} {
                     distributed-dr;
