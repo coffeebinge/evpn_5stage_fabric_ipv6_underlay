@@ -817,6 +817,39 @@ routing-instances {
 {% endif %}
             }
         }
+        forwarding-options {
+            dhcp-relay {
+                forward-only;
+                server-group {
+                    ALL {
+{% for DHCP in GLOBAL['dhcp-servers'] %}
+                        {{ DHCP }};
+{% endfor %}
+                    }
+                }
+                group ALL {
+                    active-server-group allow-server-change;
+                    overrides {
+                        relay-source lo0.1;
+                    }
+                    relay-option-82 {
+                        circuit-id {
+                            vlan-id-only;
+                        }
+                        server-id-override;
+                    }
+                    route-suppression {
+                        destination;
+                    }
+{% if USERINPUT['datavlans'] is defined %}{% for IRB in USERINPUT['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+                    interface irb.{{ IRB['id'] }};
+{% endif %}{% endfor %}{% endif %}
+{# {% for IRB in GLOBAL['datavlans'] %}{% if IRB['l3vrf'] == RI['name'] %}
+                    interface irb.{{ IRB['id'] }};
+{% endif %}{% endfor %} #}
+                }
+            }
+        }
         interface lo0.{% for LO in USERINPUT['loopbacks'] %}{% if LO['vrf'] == RI['name'] %}{{ LO['id'] }}{% endif %}{% endfor %};
 {% for INT in USERINPUT['ae-ints'] %}{% if INT['l3-enabled'] == True %}{% for UNITS in INT['unit'] %}{% if UNITS['vrf'] == RI['name'] %}
         interface ae{{ INT['int'] }}.{{ UNITS['id'] }};
