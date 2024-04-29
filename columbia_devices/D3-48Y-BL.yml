@@ -12,7 +12,7 @@ oism:
   sbd-addr-v4: 10.44.91.12/24
   sbd-addr-v6: "2001:db8:91::12/64"
   border-l3-int: ae1.99
-  pim-static-or-local: static   # set static or local
+  pim-static-or-local: local   # set static or local
   pim-static-rp-v4: 2.2.2.2
   pim-static-rp-v6: "2001:db8:2:2::2:2"
   pim-local-rp-v4: 2.2.2.2
