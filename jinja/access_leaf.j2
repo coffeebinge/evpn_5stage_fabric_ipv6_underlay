@@ -152,10 +152,12 @@ interfaces {
 {% if INTS['vlan-tagging'] == True %}
             vlan-id {{ UNITS['vlan-id'] }};
 {% endif %}
-{% if not GLOBAL['disable-ipv4-underlay'] == True %}
+{% if GLOBAL['disable-ipv4-underlay'] == False %}
             family inet {
                 address {{ UNITS['addr-v4'] }}/{{ UNITS['bitmask'] }};
             }
+{% else %}
+            family inet;
 {% endif %}
 {% if not UNITS['addr-v6'] == False %}
             family inet6 {
